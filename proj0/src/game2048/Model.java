@@ -138,7 +138,7 @@ public class Model {
         int size = b.size();
         for (int i = 0; i < size; i += 1) {
             for (int j = 0; j < size; j += 1) {
-                if (b.tile(i, j) == null) {
+                if (emptySpaceExists(b)) {
                     return true;
                 }
                 if (sameValueAdjacentTilesExist(b, i, j)) {
@@ -149,7 +149,7 @@ public class Model {
         return false;
     }
 
-    /*check if adjacent tiles exist*/
+    /*check if adjacent tiles with the same values exist*/
     private static boolean sameValueAdjacentTilesExist(Board board, int i, int j) {
         int[] adjacentX = {i - 1, i + 1, i, i}; // Left, Right, Up, Down
         int[] adjacentY = {j, j, j - 1, j + 1}; // Left, Right, Up, Down
