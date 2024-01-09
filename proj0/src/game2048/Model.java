@@ -2,6 +2,8 @@ package game2048;
 
 import java.util.Formatter;
 
+import static org.apache.commons.lang3.Validate.validIndex;
+
 
 /** The state of a game of 2048.
  *  @author P. N. Hilfinger + Josh Hug
@@ -87,14 +89,20 @@ public class Model {
             maxScore = Math.max(score, maxScore);
         }
     }
-    
+
     /** Returns true if at least one space on the Board is empty.
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
-
-
+        int size = b.size();
+        for (int i = 0; i < size; i += 1) {
+            for (int j = 0; j < size; j += 1) {
+                if (b.tile(i, j) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -105,9 +113,18 @@ public class Model {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
-
-
-        return false;
+        boolean maxTileExists = false;
+        int board_size = b.size();
+        for (int i = 0; i < board_size; i += 1) {
+            for (int j = 0; j < board_size; j += 1) {
+                if (b.tile(i, j) != null) {
+                    if (b.tile(i, j).value() == MAX_PIECE) {
+                        maxTileExists = true;
+                    }
+                }
+            }
+        }
+        return maxTileExists;
     }
 
     /**
@@ -118,10 +135,42 @@ public class Model {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-
-
+        int size = b.size();
+        for (int i = 0; i < size; i += 1) {
+            for (int j = 0; j < size; j += 1) {
+                if (b.tile(i, j) == null) {
+                    return true;
+                }
+                if (sameValueAdjacentTilesExist(b, i, j)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
+
+    /*check if adjacent tiles exist*/
+    private static boolean sameValueAdjacentTilesExist(Board board, int i, int j) {
+        int[] adjacentX = {i - 1, i + 1, i, i}; // Left, Right, Up, Down
+        int[] adjacentY = {j, j, j - 1, j + 1}; // Left, Right, Up, Down
+        // Display adjacent dot locations
+        for (int m = 0; m < adjacentX.length; m++) {
+            int compareIndexX = adjacentX[i];
+            int compareIndexY = adjacentY[i];
+            if (validIndex(board, compareIndexX, compareIndexY)) {
+                if (board.tile(i, j).value() == board.tile(compareIndexX, compareIndexY).value()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*check if index is valid*/
+    private static boolean validIndex(Board board, int compareIndexX, int compareIndexY) {
+        return (compareIndexX >= 0) && (compareIndexY >= 0) && (compareIndexX < board.size()) && (compareIndexY < board.size());
+    }
+
 
     /** Tilt the board toward SIDE.
      *
