@@ -187,16 +187,21 @@ public class Model {
     public void tilt(Side side) {
         // TODO: Modify this.board (and if applicable, this.score) to account
         // for the tilt to the Side SIDE.
-        int size = this.board.size();
-        for (int j = 0; j < size; j += 1) {
-            moveSingleColumn(side,j);
-        }
-
-
+        board.setViewingPerspective(side);
+        upOnly();
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
     }
+
+    private void upOnly() {
+        int size = this.board.size();
+        for (int j = 0; j < size; j += 1) {
+            moveSingleColumn(j);
+        }
+    }
+
     boolean upperMergerd = false;
-    private void moveSingleColumn(Side side, int j) {
+    private void moveSingleColumn( int j) {
         int size = this.board.size();
         for (int i = size - 2; i >= 0; i -= 1) {
             if (board.tile(j,i) != null) {
