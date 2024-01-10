@@ -202,7 +202,7 @@ public class Model {
             if (board.tile(j,i) != null) {
                 Tile t = board.tile(j, i);
 //                System.out.println("i's value is: " + i);
-                System.out.println("tile value is: "+t.value());
+//                System.out.println("tile value is: "+t.value());
                 int[] location = getDestinationTile(board, j, i);
                 board.move(location[0], location[1], t);
             }
@@ -213,37 +213,35 @@ public class Model {
         int[] location = new int[2];
         location[0] = j;
         location[1] = i;
-        //handle situation when no merge
         int row = i;
         int mergeTime = 0;
-        System.out.println("row's initial value: "+row);
-        while (row < board.size()) {
+        while (row < board.size() && validIndex(board, j, row + 1)) {
             //check if upper tile is null
-            if (validIndex(board, j, row + 1) && board.tile(j, row + 1) == null ) {
+//            System.out.println("checking row's  value before upper null: "+row);
+            if (board.tile(j, row + 1) == null ) {
                 location[0] = j;
                 location[1] = row + 1;
                 row += 1;
-                if (row > board.size() - 1) {
-                    break;
-                }
-            }
-            boolean checkAdjacentTileNotNull = validIndex(board, j, row + 1) && board.tile(j, row + 1)!= null && board.tile(j, i ) != null;
-            if (checkAdjacentTileNotNull && board.tile(j, row + 1).value() == board.tile(j, i).value() && mergeTime < 1) {
+            } else if (checkIfMerge(row, j, i, mergeTime)) {
                 //upper tile is the same value
                 location[0] = j;
                 location[1] = row + 1;
                 row += 1;
                 mergeTime += 1;
                 score += 2 * board.tile(j, location[1]).value();
-            }
-            else{
-                row+=1;
-                if (row > board.size() - 1) {
-                    break;
-                }
+//                System.out.println("checking row's value after merge: " + row);
+            } else {
+//                System.out.println("checking row's value after else: " + row);
+                break;
             }
         }
         return location;
+    }
+
+    private boolean checkIfMerge(int row,int j, int i, int mergeTime) {
+        boolean checkIfNotNull = board.tile(j, row + 1)!= null;
+        boolean checkIfSameValue = board.tile(j, row + 1).value() == board.tile(j, i).value() && mergeTime < 1;
+        return checkIfNotNull && checkIfSameValue;
     }
 
 
