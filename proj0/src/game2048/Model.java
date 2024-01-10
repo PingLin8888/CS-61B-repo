@@ -187,9 +187,34 @@ public class Model {
     public void tilt(Side side) {
         // TODO: Modify this.board (and if applicable, this.score) to account
         // for the tilt to the Side SIDE.
+        int size = this.board.size();
+        for (int j = 0; j < size; j += 1) {
+            moveSingleColumn(side,j);
+        }
 
 
         checkGameOver();
+    }
+
+    private void moveSingleColumn(Side side, int j) {
+        int size = this.board.size();
+        for (int i = size - 2; i >= 0; i -= 1) {
+            if (board.tile(j,i) != null) {
+                Tile t = board.tile(j, i);
+                int[] location = getDestinationTile(board, j, i);
+                board.move(location[0], location[1], t);
+            }
+        }
+    }
+
+    private int[] getDestinationTile(Board board, int j, int i) {
+        int[] location = new int[2];
+        while (validIndex(board, j, i + 1) && board.tile(j, i + 1) == null) {
+            location[0] = j;
+            location[1] = i + 1;
+            i += 1;
+        }
+        return location;
     }
 
 
