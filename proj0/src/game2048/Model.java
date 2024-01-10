@@ -201,6 +201,7 @@ public class Model {
         for (int i = size - 2; i >= 0; i -= 1) {
             if (board.tile(j,i) != null) {
                 Tile t = board.tile(j, i);
+                //System.out.println("i's value is: " + i);
                 int[] location = getDestinationTile(board, j, i);
                 board.move(location[0], location[1], t);
             }
@@ -209,10 +210,27 @@ public class Model {
 
     private int[] getDestinationTile(Board board, int j, int i) {
         int[] location = new int[2];
-        while (validIndex(board, j, i + 1) && board.tile(j, i + 1) == null) {
-            location[0] = j;
-            location[1] = i + 1;
-            i += 1;
+        //handle situation when no merge
+        int row = i;
+        int mergeTime = 0;
+        while (validIndex(board, j, row + 1) ) {
+            //upper tile is null
+            if (board.tile(j, row + 1) == null ) {
+                location[0] = j;
+                location[1] = row + 1;
+                row += 1;
+            }
+            boolean checkAdjacentTileNotNull = validIndex(board, j, row + 1) && board.tile(j, row + 1)!= null && board.tile(j, row ) != null;
+            if (checkAdjacentTileNotNull && board.tile(j, row + 1).value()== board.tile(j, row).value() && mergeTime < 1) {
+                //upper tile is the same value
+                location[0] = j;
+                location[1] = row + 1;
+                row += 1;
+                mergeTime += 1;
+            }
+            else{
+                row += 1;
+            }
         }
         return location;
     }
