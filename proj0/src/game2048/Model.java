@@ -223,21 +223,18 @@ public class Model {
                 location[0] = j;
                 location[1] = row + 1;
                 row += 1;
-                System.out.println("row's value after move up when upTile is null: "+row);
                 if (row > board.size() - 1) {
                     break;
                 }
             }
-//            System.out.println("before checking row+1. row+1= "+(row+1));
             boolean checkAdjacentTileNotNull = validIndex(board, j, row + 1) && board.tile(j, row + 1)!= null && board.tile(j, i ) != null;
             if (checkAdjacentTileNotNull && board.tile(j, row + 1).value() == board.tile(j, i).value() && mergeTime < 1) {
                 //upper tile is the same value
-                System.out.println("inside same value ");
                 location[0] = j;
                 location[1] = row + 1;
                 row += 1;
                 mergeTime += 1;
-                System.out.println("row's value after move up when upTile is the same value: "+row);
+                score += 2 * board.tile(j, location[1]).value();
             }
             else{
                 row+=1;
@@ -245,9 +242,6 @@ public class Model {
                     break;
                 }
             }
-
-
-
         }
         return location;
     }
