@@ -155,8 +155,8 @@ public class Model {
         int[] adjacentY = {j, j, j - 1, j + 1}; // Left, Right, Up, Down
         // Display adjacent dot locations
         for (int m = 0; m < adjacentX.length; m++) {
-            int compareIndexX = adjacentX[i];
-            int compareIndexY = adjacentY[i];
+            int compareIndexX = adjacentX[m];
+            int compareIndexY = adjacentY[m];
 //            System.out.println("i is: "+i+" j: "+j);
 //            System.out.println("adjacent's compareIndexX : "+compareIndexX+" compareIndexY: "+compareIndexY);
             if (validIndex(board, compareIndexX, compareIndexY)) {
