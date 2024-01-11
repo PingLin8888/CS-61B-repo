@@ -157,8 +157,15 @@ public class Model {
         for (int m = 0; m < adjacentX.length; m++) {
             int compareIndexX = adjacentX[i];
             int compareIndexY = adjacentY[i];
+//            System.out.println("i is: "+i+" j: "+j);
+//            System.out.println("adjacent's compareIndexX : "+compareIndexX+" compareIndexY: "+compareIndexY);
             if (validIndex(board, compareIndexX, compareIndexY)) {
                 if (board.tile(i, j).value() == board.tile(compareIndexX, compareIndexY).value()) {
+                    return true;
+                }
+            }
+            if (board.size() <= 2) {
+                if (validIndex(board, i, j + 1) && board.tile(i, j).value() == board.tile(i, j + 1).value()) {
                     return true;
                 }
             }
@@ -206,8 +213,8 @@ public class Model {
         for (int i = size - 2; i >= 0; i -= 1) {
             if (board.tile(j,i) != null) {
                 Tile t = board.tile(j, i);
-                System.out.println("i's value is: " + i);
-                System.out.println("t is: "+t);
+//                System.out.println("i's value is: " + i);
+//                System.out.println("t is: "+t);
                 int[] location = getDestinationTile(board, j, i);
                 upperMergerd = board.move(location[0], location[1], t);
             }
@@ -227,7 +234,7 @@ public class Model {
                 location[0] = j;
                 location[1] = row + 1;
                 row += 1;
-                System.out.println("upper is null, move 1 step upper, now row: "+row);
+//                System.out.println("upper is null, move 1 step upper, now row: "+row);
             } else if (checkIfMerge(row, j, i, mergeTime, board)) {
                 //upper tile is the same value
                 location[0] = j;
@@ -236,10 +243,10 @@ public class Model {
 //                System.out.println("before merge, merge time is: " + mergeTime);
                 mergeTime += 1;
                 score += 2 * board.tile(j, location[1]).value();
-                System.out.println("upper is same value, merge, now row: " + row);
+//                System.out.println("upper is same value, merge, now row: " + row);
 //                System.out.println("after merge, merge time is: " + mergeTime);
             } else {
-                System.out.println("upper is diff value, no move, return. now row: " + row);
+//                System.out.println("upper is diff value, no move, return. now row: " + row);
                 break;
             }
         }
@@ -250,7 +257,7 @@ public class Model {
     private boolean checkIfMerge(int row,int j, int i, int mergeTime, Board board) {
         boolean checkIfNotNull = board.tile(j, row + 1)!= null;
         boolean checkIfSameValue = board.tile(j, row + 1).value() == board.tile(j, i).value() && mergeTime < 1;
-        System.out.println("inside check: t upper tile is: "+board.tile(j,i+1));
+//        System.out.println("inside check: t upper tile is: "+board.tile(j,i+1));
         return checkIfNotNull && checkIfSameValue && !upperMergerd;
 
     }
