@@ -68,6 +68,7 @@ public class PalindromeStage implements AdventureStage {
             reversed = new IntList(l.first, reversed);
             l = l.rest;
         }
+        reversed = new IntList(l.first, reversed);
         return reversed;
     }
 
