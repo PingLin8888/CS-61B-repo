@@ -128,4 +128,36 @@ public class LinkedListDequeTest {
         assertThat(lld1.getRecursive(0)).isEqualTo("apple");
         assertThat(lld1.getRecursive(2)).isEqualTo("banana");
     }
+
+    @Test
+    /**Check removeFirst works*/
+    public void removeFirstTest(){
+        Deque<Integer> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.removeFirst()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(9, 8);
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(8);
+        lld1.removeFirst();
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    /**Check removeLast works*/
+    public void removeLastTest(){
+        Deque<Integer> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3, 9);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3);
+        lld1.removeLast();
+        assertThat(lld1.isEmpty()).isTrue();
+    }
 }

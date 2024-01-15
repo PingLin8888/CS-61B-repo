@@ -75,11 +75,30 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
+//        if (size == 1) {
+//            sentinel.next = sentinel;
+//            sentinel.prev = sentinel;
+//            size--;
+//        } else if (size > 1) {
+//            sentinel.next = sentinel.next.next;
+//            sentinel.next.prev = sentinel;
+//            size--;
+//        }
+        if (size >= 1) {
+            sentinel.next = sentinel.next.next;
+            sentinel.next.prev = sentinel;
+            size--;
+        }
         return null;
     }
 
     @Override
     public T removeLast() {
+        if (size >= 1) {
+            sentinel.prev = sentinel.prev.prev;
+            sentinel.prev.next = sentinel;
+            size--;
+        }
         return null;
     }
 
