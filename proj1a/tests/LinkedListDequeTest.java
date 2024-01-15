@@ -71,4 +71,61 @@ public class LinkedListDequeTest {
      }
 
     // Below, you'll write your own tests for LinkedListDeque.
+    @Test
+    /**Check that isEmpty works on an empty deque and a nonempty deque.*/
+    public void isEmptyTest() {
+        Deque<Integer> lld1 = new LinkedListDeque<>();
+        Boolean actual = lld1.isEmpty();
+        //assertWithMessage("Failed to return true").that(actual).isTrue();
+        assertThat(actual).isTrue();
+
+        lld1.addLast(6);
+        assertThat(lld1.isEmpty()).isFalse();
+    }
+
+    @Test
+    /**Check size works */
+    public void testSize(){
+        Deque<String> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.size()).isEqualTo(0);
+
+        lld1.addFirst("apple");
+        assertThat(lld1.size()).isEqualTo(1);
+    }
+
+    @Test
+    /**Check get works*/
+    public void testGet(){
+        Deque<String> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.get(-1)).isEqualTo(null);
+
+        lld1.addFirst("orange");
+        assertThat(lld1.get(0)).isEqualTo("orange");
+        assertThat(lld1.get(10)).isEqualTo(null);
+
+        lld1.addLast("banana");
+        assertThat(lld1.get(1)).isEqualTo("banana");
+
+        lld1.addFirst("apple");
+        assertThat(lld1.get(0)).isEqualTo("apple");
+        assertThat(lld1.get(2)).isEqualTo("banana");
+    }
+
+    @Test
+    /**Check getRecursive works*/
+    public void testGetRecursive(){
+        Deque<String> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.getRecursive(-1)).isEqualTo(null);
+
+        lld1.addFirst("orange");
+        assertThat(lld1.getRecursive(0)).isEqualTo("orange");
+        assertThat(lld1.getRecursive(10)).isEqualTo(null);
+
+        lld1.addLast("banana");
+        assertThat(lld1.getRecursive(1)).isEqualTo("banana");
+
+        lld1.addFirst("apple");
+        assertThat(lld1.getRecursive(0)).isEqualTo("apple");
+        assertThat(lld1.getRecursive(2)).isEqualTo("banana");
+    }
 }
