@@ -89,8 +89,13 @@ public class LinkedListDequeTest {
         Deque<String> lld1 = new LinkedListDeque<>();
         assertThat(lld1.size()).isEqualTo(0);
 
+        lld1.removeLast();
+        assertThat(lld1.size()).isEqualTo(0);
+
         lld1.addFirst("apple");
         assertThat(lld1.size()).isEqualTo(1);
+        lld1.removeLast();
+        assertThat(lld1.size()).isEqualTo(0);
     }
 
     @Test
@@ -160,4 +165,42 @@ public class LinkedListDequeTest {
         lld1.removeLast();
         assertThat(lld1.isEmpty()).isTrue();
     }
+
+    @Test
+    /**Check add after remove works*/
+    public void addAfterRemove(){
+        Deque<Integer> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3, 9);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3);
+        lld1.removeLast();
+        assertThat(lld1.isEmpty()).isTrue();
+        lld1.addFirst(99);
+        assertThat(lld1.toList()).containsExactly(99);
+        lld1.removeLast();
+        lld1.addLast(100);
+        assertThat(lld1.toList()).containsExactly(100);
+    }
+
+    @Test
+    /**Check toList works*/
+    public void toListTest(){
+        Deque<Integer> lld1 = new LinkedListDeque<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3, 9);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3);
+        lld1.removeLast();
+        assertThat(lld1.toList()).isEmpty();
+    }
+
 }
