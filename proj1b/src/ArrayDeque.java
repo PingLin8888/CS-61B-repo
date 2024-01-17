@@ -77,7 +77,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -92,8 +92,25 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T get(int index) {
+        if (validIndex(index)) {
+            return items[index];
+        }
         return null;
     }
+
+    private boolean validIndex(int index) {
+        if (nextLast <= nextFirst) {
+            if (index > nextFirst && index < items.length) {
+                return true;
+            } else if (index >= 0 && index < nextLast) {
+                return true;
+            }
+        } else if (index > nextFirst && index < nextLast) {
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public T getRecursive(int index) {

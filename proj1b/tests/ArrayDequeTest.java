@@ -62,8 +62,6 @@ public class ArrayDequeTest {
     public void addFirstAndAddLastTest() {
         Deque<Integer> lld1 = new ArrayDeque<>();
 
-         /* I've decided to add in comments the state after each call for the convenience of the
-            person reading this test. Some programmers might consider this excessively verbose. */
         lld1.addLast(0);   // [0]
         lld1.addLast(1);   // [0, 1]
         lld1.addFirst(-1); // [-1, 0, 1]
@@ -76,6 +74,33 @@ public class ArrayDequeTest {
         lld1.addLast(-99);
 
 //        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
+    }
+
+    @Test
+    /**Check get works*/
+    public void testGet(){
+        Deque<String> lld1 = new ArrayDeque<>();
+        assertThat(lld1.get(-1)).isEqualTo(null);
+
+        lld1.addFirst("orange");
+        assertThat(lld1.get(3)).isEqualTo("orange");
+        assertThat(lld1.get(10)).isEqualTo(null);
+        lld1.addLast("banana");
+        assertThat(lld1.get(4)).isEqualTo("banana");
+        lld1.addFirst("apple");
+        assertThat(lld1.get(2)).isEqualTo("apple");
+        assertThat(lld1.get(1)).isNull();
+        lld1.addFirst("apple2");
+        lld1.addFirst("apple5");
+        lld1.addFirst("apple33");
+        assertThat(lld1.get(7)).isEqualTo("apple33");
+        lld1.addLast("banana5");
+        lld1.addFirst("apple9");
+        lld1.addFirst("berry");
+        String _1 = lld1.get(0);
+        String _2 = lld1.get(9);
+        assertThat(lld1.get(0)).isEqualTo("apple9");
+        assertThat(lld1.get(9)).isNull();
     }
 
 }
