@@ -6,6 +6,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private int nextFirst;
     private int nextLast;
     T[] items;
+    final double usageRate=0.25;
 
     public ArrayDeque() {
         items= (T[]) new Object[8];
@@ -33,7 +34,20 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
+    /*When size equals item.length and need to add one more item*/
     private void resizeUp(int capacity) {
+        resize(capacity);
+    }
+
+    /*When items.length is bigger than 15 and usageRate is below 0.25*/
+    private void resizeDown() {
+        if (items.length > 15 && ((double) (size - 1) / items.length) < usageRate) {
+            resize(Math.max((int) ((size - 1) / usageRate), 15));
+        }
+    }
+
+    /*Helper function to help copy elements from old array to new array*/
+    private void resize(int capacity) {
         T[] temp = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
 //            if (nextFirst + 1 + i >= size) {
@@ -107,6 +121,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public T removeFirst() {
         if (size >= 1) {
+            resizeDown();
             int newNextFirst = nextFirst + 1;
             if (!validIndex(newNextFirst)) {
                 newNextFirst = 0;
@@ -128,6 +143,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public T removeLast() {
         if (size >= 1) {
+            resizeDown();
             int newNextLast = nextLast - 1;
             if (!validIndex(newNextLast)) {
                 newNextLast = items.length - 1;

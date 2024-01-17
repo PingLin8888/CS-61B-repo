@@ -198,4 +198,31 @@ public class ArrayDequeTest {
         lld1.addLast(100);
         assertThat(lld1.toList()).containsExactly(100);
     }
+
+    @Test
+    /** This test performs interspersed addFirst and addLast calls. */
+    public void resizeUpAndDownTest() {
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        lld1.addLast(0);   // [0]
+        lld1.addLast(1);   // [0, 1]
+        lld1.addFirst(-1); // [-1, 0, 1]
+        lld1.addLast(2);   // [-1, 0, 1, 2]
+        lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
+        lld1.addFirst(-1);
+        lld1.addLast(11);
+        lld1.addLast(22);
+        lld1.addFirst(88);
+        lld1.addLast(-9);
+
+        lld1.removeLast();
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeFirst();
+        //        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
+    }
+
 }
