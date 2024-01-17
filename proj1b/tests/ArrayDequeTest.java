@@ -103,4 +103,30 @@ public class ArrayDequeTest {
         assertThat(lld1.get(9)).isNull();
     }
 
+    @Test
+    /**Check that isEmpty works on an empty deque and a nonempty deque.*/
+    public void isEmptyTest() {
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        Boolean actual = lld1.isEmpty();
+        assertThat(actual).isTrue();
+
+        lld1.addLast(6);
+        assertThat(lld1.isEmpty()).isFalse();
+    }
+
+    @Test
+    /**Check size works */
+    public void testSize(){
+        Deque<String> lld1 = new ArrayDeque<>();
+        assertThat(lld1.size()).isEqualTo(0);
+
+        lld1.removeLast();
+        assertThat(lld1.size()).isEqualTo(0);
+
+        lld1.addFirst("apple");
+        assertThat(lld1.size()).isEqualTo(1);
+//        lld1.removeLast();
+//        assertThat(lld1.size()).isEqualTo(0);
+    }
+
 }
