@@ -90,11 +90,11 @@ public class LinkedListDeque<T> implements Deque<T> {
 //            size--;
 //        }
         if (size >= 1) {
-            StuffNode delNode = sentinel.next;
+            T delNode = (T) sentinel.next.item;
             sentinel.next = sentinel.next.next;
             sentinel.next.prev = sentinel;
             size--;
-            return (T) delNode;
+            return delNode;
         }
         return null;
     }
@@ -107,11 +107,11 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public T removeLast() {
         if (size >= 1) {
-            StuffNode delNode = sentinel.prev;
+            T delNode = (T) sentinel.prev.item;
             sentinel.prev = sentinel.prev.prev;
             sentinel.prev.next = sentinel;
             size--;
-            return (T) delNode;
+            return delNode;
         }
         return null;
     }
