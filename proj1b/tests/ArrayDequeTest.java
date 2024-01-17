@@ -61,7 +61,6 @@ public class ArrayDequeTest {
     /** This test performs interspersed addFirst and addLast calls. */
     public void addFirstAndAddLastTest() {
         Deque<Integer> lld1 = new ArrayDeque<>();
-
         lld1.addLast(0);   // [0]
         lld1.addLast(1);   // [0, 1]
         lld1.addFirst(-1); // [-1, 0, 1]
@@ -72,7 +71,6 @@ public class ArrayDequeTest {
         lld1.addLast(22);
         lld1.addFirst(88);
         lld1.addLast(-99);
-
 //        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
     }
 
@@ -81,7 +79,6 @@ public class ArrayDequeTest {
     public void testGet(){
         Deque<String> lld1 = new ArrayDeque<>();
         assertThat(lld1.get(-1)).isEqualTo(null);
-
         lld1.addFirst("orange");
         assertThat(lld1.get(3)).isEqualTo("orange");
         assertThat(lld1.get(10)).isEqualTo(null);
@@ -129,4 +126,76 @@ public class ArrayDequeTest {
 //        assertThat(lld1.size()).isEqualTo(0);
     }
 
+    @Test
+    /**Check toList works*/
+    public void toListTest(){
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        assertThat(lld1.toList()).isEmpty();
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.addFirst(43);
+        lld1.addFirst(-21);
+        lld1.addLast(11);
+        lld1.addFirst(75);
+        lld1.addFirst(222);
+        lld1.addFirst(-96);
+//        lld1.removeLast();
+        List _1 = lld1.toList();
+        assertThat(lld1.toList()).containsExactly(-96, 222, 75, -21, 43, -3, 9, 8, 11);
+    }
+
+    @Test
+    /**Check removeFirst works*/
+    public void removeFirstTest(){
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        assertThat(lld1.removeFirst()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(9, 8);
+        lld1.removeFirst();
+        assertThat(lld1.toList()).containsExactly(8);
+        lld1.removeFirst();
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    /**Check removeLast works*/
+    public void removeLastTest() {
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeLast();
+        List temp = lld1.toList();
+        assertThat(lld1.toList()).containsExactly(-3, 9);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3);
+        lld1.removeLast();
+        assertThat(lld1.isEmpty()).isTrue();
+    }
+
+    @Test
+    /**Check add after remove works*/
+    public void addAfterRemove(){
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        assertThat(lld1.removeLast()).isEqualTo(null);
+        lld1.addFirst(9);
+        lld1.addFirst(-3);
+        lld1.addLast(8);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3, 9);
+        lld1.removeLast();
+        assertThat(lld1.toList()).containsExactly(-3);
+        lld1.removeLast();
+        assertThat(lld1.isEmpty()).isTrue();
+        lld1.addFirst(99);
+        assertThat(lld1.toList()).containsExactly(99);
+        lld1.removeLast();
+        lld1.addLast(100);
+        assertThat(lld1.toList()).containsExactly(100);
+    }
 }

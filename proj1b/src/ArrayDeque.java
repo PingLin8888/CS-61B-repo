@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayDeque<T> implements Deque<T> {
@@ -35,15 +36,26 @@ public class ArrayDeque<T> implements Deque<T> {
     private void resizeUp(int capacity) {
         T[] temp = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
-            if (nextFirst + 1 + i >= size) {
-                temp[i] = items[nextFirst + 1 + i -size];
-            } else {
-                temp[i] = items[nextFirst + 1 + i];
-            }
+//            if (nextFirst + 1 + i >= size) {
+//                temp[i] = items[nextFirst + 1 + i -size];
+//            } else {
+//                temp[i] = items[nextFirst + 1 + i];
+//            }
+            temp[i] = items[getIndex(i)];
         }
         items = temp;
         nextFirst = items.length - 1;
         nextLast = size;
+    }
+
+    private int getIndex(int i) {
+        int index;
+        if (nextFirst + 1 + i >= items.length) {
+            index = nextFirst + 1 + i - items.length;
+        } else {
+            index = nextFirst + 1 + i;
+        }
+        return index;
     }
 
     @Override
@@ -67,7 +79,11 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public List toList() {
-        return null;
+        List<T> returnList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            returnList.add(items[getIndex(i)]);
+        }
+        return returnList;
     }
 
     @Override
@@ -83,13 +99,45 @@ public class ArrayDeque<T> implements Deque<T> {
         return size;
     }
 
+    /**
+     * Remove and return the element at the front of the deque, if it exists.
+     *
+     * @return removed element, otherwise {@code null}.
+     */
     @Override
     public T removeFirst() {
+        if (size >= 1) {
+            int newNextFirst = nextFirst + 1;
+            if (!validIndex(newNextFirst)) {
+                newNextFirst = 0;
+            }
+            T del = items[newNextFirst];
+            items[newNextFirst] = null;
+            nextFirst = newNextFirst;
+            size--;
+            return del;
+        }
         return null;
     }
 
+    /**
+     * Remove and return the element at the back of the deque, if it exists.
+     *
+     * @return removed element, otherwise {@code null}.
+     */
     @Override
     public T removeLast() {
+        if (size >= 1) {
+            int newNextLast = nextLast - 1;
+            if (!validIndex(newNextLast)) {
+                newNextLast = items.length - 1;
+            }
+            T del = items[newNextLast];
+            items[newNextLast] = null;
+            nextLast = newNextLast;
+            size--;
+            return del;
+        }
         return null;
     }
 
