@@ -73,6 +73,11 @@ public class LinkedListDeque<T> implements Deque<T> {
         return size;
     }
 
+    /**
+     * Remove and return the element at the front of the deque, if it exists.
+     *
+     * @return removed element, otherwise {@code null}.
+     */
     @Override
     public T removeFirst() {
 //        if (size == 1) {
@@ -85,19 +90,28 @@ public class LinkedListDeque<T> implements Deque<T> {
 //            size--;
 //        }
         if (size >= 1) {
+            StuffNode delNode = sentinel.next;
             sentinel.next = sentinel.next.next;
             sentinel.next.prev = sentinel;
             size--;
+            return (T) delNode;
         }
         return null;
     }
 
+    /**
+     * Remove and return the element at the back of the deque, if it exists.
+     *
+     * @return removed element, otherwise {@code null}.
+     */
     @Override
     public T removeLast() {
         if (size >= 1) {
+            StuffNode delNode = sentinel.prev;
             sentinel.prev = sentinel.prev.prev;
             sentinel.prev.next = sentinel;
             size--;
+            return (T) delNode;
         }
         return null;
     }
