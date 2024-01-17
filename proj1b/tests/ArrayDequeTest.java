@@ -122,8 +122,8 @@ public class ArrayDequeTest {
 
         lld1.addFirst("apple");
         assertThat(lld1.size()).isEqualTo(1);
-//        lld1.removeLast();
-//        assertThat(lld1.size()).isEqualTo(0);
+        lld1.removeLast();
+        assertThat(lld1.size()).isEqualTo(0);
     }
 
     @Test
@@ -141,7 +141,6 @@ public class ArrayDequeTest {
         lld1.addFirst(222);
         lld1.addFirst(-96);
 //        lld1.removeLast();
-        List _1 = lld1.toList();
         assertThat(lld1.toList()).containsExactly(-96, 222, 75, -21, 43, -3, 9, 8, 11);
     }
 
@@ -159,6 +158,8 @@ public class ArrayDequeTest {
         assertThat(lld1.toList()).containsExactly(8);
         lld1.removeFirst();
         assertThat(lld1.isEmpty()).isTrue();
+        lld1.addFirst(22);
+        assertThat(lld1.toList()).containsExactly(22);
     }
 
     @Test
@@ -176,6 +177,8 @@ public class ArrayDequeTest {
         assertThat(lld1.toList()).containsExactly(-3);
         lld1.removeLast();
         assertThat(lld1.isEmpty()).isTrue();
+        lld1.addLast(22);
+        assertThat(lld1.toList()).containsExactly(22);
     }
 
     @Test
@@ -222,6 +225,32 @@ public class ArrayDequeTest {
         lld1.removeLast();
         lld1.removeFirst();
         lld1.removeFirst();
+        //        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
+    }
+
+    @Test
+    public void remove_last_trigger_resize() {
+        Deque<Integer> lld1 = new ArrayDeque<>();
+        lld1.addLast(0);   // [0]
+        lld1.addLast(1);   // [0, 1]
+        lld1.addFirst(-1); // [-1, 0, 1]
+        lld1.addLast(2);   // [-1, 0, 1, 2]
+        lld1.addFirst(-2); // [-2, -1, 0, 1, 2]
+        lld1.addFirst(-1);
+        lld1.addLast(11);
+        lld1.addLast(22);
+        lld1.addFirst(88);
+        lld1.addLast(-9);
+
+        lld1.removeLast();
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeLast();
+        lld1.removeLast();
+
         //        assertThat(lld1.toList()).containsExactly(-2, -1, 0, 1, 2).inOrder();
     }
 
