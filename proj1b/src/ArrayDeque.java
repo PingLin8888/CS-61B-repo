@@ -166,16 +166,20 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     private boolean validIndex(int index) {
-        if (nextLast <= nextFirst) {
-            if (index > nextFirst && index < items.length) {
-                return true;
-            } else if (index >= 0 && index < nextLast) {
-                return true;
-            }
-        } else if (index > nextFirst && index < nextLast) {
-            return true;
+//        if (nextLast <= nextFirst) {
+//            if (index > nextFirst && index < items.length) {
+//                return true;
+//            } else if (index >= 0 && index < nextLast) {
+//                return true;
+//            }
+//        } else if (index > nextFirst && index < nextLast) {
+//            return true;
+//        }
+//        return false;
+        if (nextFirst <= nextLast) {
+            return (index >= nextFirst && index <= nextLast);
         }
-        return false;
+        return (index >= nextFirst && index < items.length) || index >= 0 && index <= nextLast;
     }
 
 
