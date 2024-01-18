@@ -169,16 +169,10 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     private boolean validIndex(int index) {
-        if (nextLast <= nextFirst) {
-            if (index > nextFirst && index < items.length) {
-                return true;
-            } else if (index >= 0 && index < nextLast) {
-                return true;
-            }
-        } else if (index > nextFirst && index < nextLast) {
-            return true;
+        if (nextFirst <= nextLast) {
+            return (index >= nextFirst && index <= nextLast);
         }
-        return false;
+        return (index >= nextFirst && index < items.length) || index >= 0 && index <= nextLast;
     }
 
 
@@ -196,18 +190,19 @@ public class ArrayDeque<T> implements Deque<T> {
         private int wizPos;
 
         public ArrayDequeIterator() {
-            this.wizPos = 0;
+            this.wizPos = (nextFirst == items.length - 1) ? 0 : nextFirst + 1;
         }
 
         @Override
         public boolean hasNext() {
-            return wizPos < size;
+            return (get(wizPos) != null);
         }
 
         @Override
         public T next() {
             T returnItem = get(wizPos);
-            wizPos += 1;
+            //wizPos += 1;
+            wizPos = (wizPos + 1 == items.length) ? 0 : wizPos + 1;
             return returnItem;
         }
     }

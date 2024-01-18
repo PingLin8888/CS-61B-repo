@@ -171,4 +171,32 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
         return (T) getRecursiveHelper(index-1, node.next);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof LinkedListDeque olld) {
+            if (this.size != olld.size) {
+                return false;
+            }
+            for (T i : this) {
+                if (!olld.contains(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean contains(T target) {
+        for (T i : this) {
+            if(i.equals(target)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
