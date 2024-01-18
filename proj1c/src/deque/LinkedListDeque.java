@@ -199,4 +199,13 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
         return false;
     }
+
+    @Override
+    public String toString(){
+        List<String> listOfItems = new ArrayList<>();
+        for (T i : this) {
+            listOfItems.add(i.toString());
+        }
+        return "{" + String.join(",", listOfItems.toString()) + "}";
+    }
 }

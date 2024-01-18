@@ -67,4 +67,22 @@ public class TestBasicsOfLldAndAd {
 
         assertThat(lld1).isEqualTo(lld2);
     }
+
+    @Test
+    public void testToStringDequesLld() {
+        Deque<String> lld1 = new LinkedListDeque<>();
+        lld1.addLast("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+        assertThat(lld1.toString()).isEqualTo("{[front, middle, back]}");
+    }
+
+    @Test
+    public void testToStringDequesAd() {
+        Deque<String> lld1 = new ArrayDeque<>();
+        lld1.addLast("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+        assertThat(lld1.toString()).isEqualTo("{[front, middle, back]}");
+    }
 }
