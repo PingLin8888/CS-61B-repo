@@ -65,7 +65,7 @@ public class ArrayDeque<T> implements Deque<T> {
         nextLast = size;
     }
 
-    private int getIndex(int i) {
+    public int getIndex(int i) {
         int index;
         if (nextFirst + 1 + i >= items.length) {
             index = nextFirst + 1 + i - items.length;
