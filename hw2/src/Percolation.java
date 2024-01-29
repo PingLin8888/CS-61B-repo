@@ -17,7 +17,6 @@ public class Percolation {
         if (N <= 0) {
             throw new IllegalArgumentException();
         }
-
         numOfOpen = 0;
         disjointSetsPercolate = new WeightedQuickUnionUF(N * N + 2);
         disjointSetsFull = new WeightedQuickUnionUF(N * N + 1);
@@ -67,13 +66,13 @@ public class Percolation {
 
     private void unionNeighbor(WeightedQuickUnionUF set, int row, int col) {
         int index = xyTo1D(row, col);
-        if (col - 1 > 0 && isOpen(row, col - 1)) {
+        if (col - 1 >= 0 && isOpen(row, col - 1)) {
             set.union(index, xyTo1D(row, col - 1));
         }
         if (col + 1 < sites.length && isOpen(row, col + 1)) {
             set.union(index, xyTo1D(row, col + 1));
         }
-        if (row - 1 > 0 && isOpen(row - 1, col)) {
+        if (row - 1 >= 0 && isOpen(row - 1, col)) {
             set.union(index, xyTo1D(row - 1, col));
         }
         if (row + 1 < sites.length && isOpen(row + 1, col)) {
@@ -96,6 +95,7 @@ public class Percolation {
         // TODO: Fill in this method.
         checkArguments(row, col);
         return disjointSetsFull.connected(xyTo1D(row, col), virtualTopSiteFull);
+//        return disjointSetsPercolate.connected(xyTo1D(row, col), virtualTopSitePercolate);
     }
 
     public int numberOfOpenSites() {

@@ -41,8 +41,59 @@ public class PercolationTest {
     }
 
     @Test
-    public void yourTestHere() {
+    public void percolateTest() {
         // TODO: write some more tests
+        int N = 5;
+        Percolation p = new Percolation(5);
+        int[][] openSites = {
+                {0, 1},
+                {2, 1},
+                {3, 1},
+                {4, 1},
+                {1, 0},
+                {1, 1}
+        };
+        int[][] expectedState = {
+                {0, 3, 0, 0, 0},
+                {3, 3, 0, 0, 0},
+                {0, 3, 0, 0, 0},
+                {0, 3, 0, 0, 0},
+                {0, 3, 0, 0, 0}
+        };
+        for (int[] site : openSites) {
+            p.open(site[0], site[1]);
+        }
+        assertThat(getState(N, p)).isEqualTo(expectedState);
+        assertThat(p.percolates()).isTrue();
     }
 
+    @Test
+    public void backwashTest() {
+        // TODO: write some more tests
+        int N = 5;
+        Percolation p = new Percolation(5);
+        int[][] openSites = {
+                {0, 1},
+                {2, 1},
+                {3, 1},
+                {4, 1},
+                {1, 0},
+                {1, 1},
+                {3, 3},
+                {4, 3}
+        };
+        int[][] expectedState = {
+                {0, 3, 0, 0, 0},
+                {3, 3, 0, 0, 0},
+                {0, 3, 0, 0, 0},
+                {0, 3, 0, 1, 0},
+                {0, 3, 0, 1, 0}
+        };
+        for (int[] site : openSites) {
+            p.open(site[0], site[1]);
+        }
+        assertThat(getState(N, p)).isEqualTo(expectedState);
+        assertThat(p.percolates()).isTrue();
+        assertThat(p.isFull(3, 3)).isFalse();
+    }
 }
