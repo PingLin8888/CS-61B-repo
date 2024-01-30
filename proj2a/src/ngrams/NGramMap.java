@@ -1,6 +1,9 @@
 package ngrams;
 
+import edu.princeton.cs.algs4.In;
+
 import java.util.Collection;
+import java.util.HashMap;
 
 import static ngrams.TimeSeries.MAX_YEAR;
 import static ngrams.TimeSeries.MIN_YEAR;
@@ -18,12 +21,22 @@ import static ngrams.TimeSeries.MIN_YEAR;
 public class NGramMap {
 
     // TODO: Add any necessary static/instance variables.
+    HashMap<String,TimeSeries> data;
 
     /**
      * Constructs an NGramMap from WORDSFILENAME and COUNTSFILENAME.
      */
     public NGramMap(String wordsFilename, String countsFilename) {
         // TODO: Fill in this constructor. See the "NGramMap Tips" section of the spec for help.
+        In file = new In(wordsFilename);
+        TimeSeries ts = new TimeSeries();
+        while (file.hasNextLine()) {
+            String line = file.readLine();
+            String[] splitLine = line.split("\t");
+            String key = splitLine[0];
+            ts.put(Integer.parseInt(splitLine[1]), Double.parseDouble(splitLine[2]));
+            data.put(key, ts);
+        }
     }
 
     /**
@@ -35,6 +48,7 @@ public class NGramMap {
      */
     public TimeSeries countHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
+        
         return null;
     }
 
