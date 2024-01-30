@@ -1,6 +1,8 @@
 package ngrams;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -28,6 +30,8 @@ public class TimeSeries extends TreeMap<Integer, Double> {
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
         // TODO: Fill in this constructor.
+        TimeSeries copy = (TimeSeries) subMap(startYear, true, endYear, true);
+        this.putAll(copy);
     }
 
     /**
@@ -35,7 +39,7 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Integer> years() {
         // TODO: Fill in this method.
-        return null;
+        return new ArrayList<>(this.keySet());
     }
 
     /**
@@ -44,7 +48,7 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public List<Double> data() {
         // TODO: Fill in this method.
-        return null;
+        return new ArrayList<>(this.values());
     }
 
     /**
@@ -58,7 +62,26 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries plus(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries returnTS = new TimeSeries();
+        if (this.isEmpty() && ts.isEmpty()) {
+            return returnTS;
+        }
+        mergeTS(returnTS, this);
+        mergeTS(returnTS, ts);
+        return returnTS;
+    }
+
+    private void mergeTS(TimeSeries returnTS, TimeSeries timeSeries) {
+        for (Map.Entry<Integer, Double> entry : timeSeries.entrySet()) {
+            int key = entry.getKey();
+            double value = entry.getValue();
+            if (returnTS.containsKey(key)) {
+                returnTS.put(key, returnTS.get(key) + value);
+            } else {
+                returnTS.put(key, value);
+            }
+        }
+
     }
 
     /**
@@ -72,7 +95,17 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries dividedBy(TimeSeries ts) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries returnTS = new TimeSeries();
+        for (Map.Entry<Integer, Double> entry : this.entrySet()) {
+            int key = entry.getKey();
+            double value = entry.getValue();
+            if (!ts.containsKey(key)) {
+                throw new IllegalArgumentException();
+            }
+            double dividedValue = value / ts.get(key);
+            returnTS.put(key, dividedValue);
+        }
+        return returnTS;
     }
 
     // TODO: Add any private helper methods.
