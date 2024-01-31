@@ -62,11 +62,12 @@ public class NGramMap {
     public TimeSeries countHistory(String word, int startYear, int endYear) {
         // TODO: Fill in this method.
         TimeSeries returnHistory = countHistory(word);
+        TimeSeries returnTS = new TimeSeries();
         if (!returnHistory.isEmpty()) {
             Map<Integer, Double> subMap = returnHistory.subMap(startYear, true, endYear, true);
-            deepCopy(returnHistory, subMap);
+            deepCopy(returnTS, subMap);
         }
-        return returnHistory;
+        return returnTS;
     }
 
     private void deepCopy(TimeSeries returnCopy, Map<Integer, Double> original) {
