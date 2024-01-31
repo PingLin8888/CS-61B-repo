@@ -30,13 +30,17 @@ public class NGramMap {
      */
     public NGramMap(String wordsFilename, String countsFilename) {
         // TODO: Fill in this constructor. See the "NGramMap Tips" section of the spec for help.
-
+        dataOfWords = new HashMap<>();
+        dataOfCounts = new TimeSeries();
         In file = new In(wordsFilename);
         TimeSeries ts = new TimeSeries();
         while (file.hasNextLine()) {
             String line = file.readLine();
             String[] splitLine = line.split("\t");
             String key = splitLine[0];
+            if (!dataOfWords.containsKey(key)) {
+                ts = new TimeSeries();
+            }
             ts.put(Integer.parseInt(splitLine[1]), Double.parseDouble(splitLine[2]));
             dataOfWords.put(key, ts);
         }
@@ -59,12 +63,13 @@ public class NGramMap {
         // TODO: Fill in this method.
         TimeSeries returnHistory = countHistory(word);
         if (!returnHistory.isEmpty()) {
-            returnHistory = (TimeSeries) returnHistory.subMap(startYear, true, endYear, true);
+            Map<Integer, Double> subMap = returnHistory.subMap(startYear, true, endYear, true);
+            deepCopy(returnHistory, subMap);
         }
         return returnHistory;
     }
 
-    private void deepCopy(TimeSeries returnCopy, TimeSeries original) {
+    private void deepCopy(TimeSeries returnCopy, Map<Integer, Double> original) {
         for (Map.Entry<Integer, Double> entry : original.entrySet()) {
             int key = entry.getKey();
             double value = entry.getValue();
@@ -144,7 +149,20 @@ public class NGramMap {
     public TimeSeries summedWeightHistory(Collection<String> words,
                                           int startYear, int endYear) {
         // TODO: Fill in this method.
-        return null;
+        TimeSeries returnTS = new TimeSeries();
+        TimeSeries ts;
+        double sum;
+        for (int i = startYear; i <= endYear; i++) {
+            sum = 0.0;
+            for (String s : words) {
+                ts = weightHistory(s, i, i);
+                if (!ts.isEmpty()) {
+                    sum += ts.get(i);
+                }
+            }
+            returnTS.put(i, sum);
+        }
+        return returnTS;
     }
 
     /**
@@ -153,12 +171,7 @@ public class NGramMap {
      */
     public TimeSeries summedWeightHistory(Collection<String> words) {
         // TODO: Fill in this method.
-        TimeSeries ts;
-        for (String s : words) {
-            ts = weightHistory(s);
-
-        }
-        return null;
+        return summedWeightHistory(words, MIN_YEAR, MAX_YEAR);
     }
 
     // TODO: Add any private helper methods.
