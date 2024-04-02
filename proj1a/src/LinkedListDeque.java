@@ -117,7 +117,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     @Override
-    public T get(int index) {
+    public T get(int index) {//for (int i = 0; i <= index; i++) {
         StuffNode temp = new StuffNode<>(null, null, sentinel.next);
         int count = 0;
         while (size > 0 && size > index) {
