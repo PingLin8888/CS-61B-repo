@@ -1,9 +1,8 @@
 package main;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class MyGraph{
+public class MyGraph {
     /*Array of Hyponyms. Index of this array is index of the hypernym.
     The array stores Hyponyms, which is lists of index of hyponyms*/
     private Hyponyms[] indexOfWordNet;
@@ -11,7 +10,10 @@ public class MyGraph{
 
     public MyGraph() {
         size = 0;
-        indexOfWordNet = new Hyponyms[1000];
+        indexOfWordNet = new Hyponyms[5];
+        for (int i = 0; i < indexOfWordNet.length; i++) {
+            indexOfWordNet[i] = new Hyponyms();
+        }
     }
 
     public int getSize() {
@@ -19,19 +21,16 @@ public class MyGraph{
     }
 
     public void addNode(int indexOfFile, Hyponyms listOfhyponyms) {
-//        if (indexOfFile >= indexOfWordNet.length) {
-//            indexOfWordNet.ensureCapacity
-//        }
-
-        if (indexOfFile >= size) {
-            Hyponyms[] newTemp = new Hyponyms[2 * size];
-            newTemp = Arrays.copyOf(indexOfWordNet, 2 * size);
+        if (indexOfFile >= indexOfWordNet.length) {
+            Hyponyms[] newTemp = new Hyponyms[Math.max(indexOfWordNet.length * 2, indexOfFile + 1)];
+            System.arraycopy(indexOfWordNet, 0, newTemp, 0, indexOfWordNet.length);
             indexOfWordNet = newTemp;
         }
-        if (indexOfWordNet[indexOfFile - 1] == null) {
-            indexOfWordNet[indexOfFile - 1] = new Hyponyms();
+        if (indexOfWordNet[indexOfFile] == null) {
+            indexOfWordNet[indexOfFile] = new Hyponyms();
         }
-        indexOfWordNet[indexOfFile - 1].addAll(listOfhyponyms.getListOfHyponyms());
+
+        indexOfWordNet[indexOfFile].addAll(listOfhyponyms.getListOfHyponyms());
         size++;
     }
 
@@ -39,11 +38,30 @@ public class MyGraph{
 "*/
     public Hyponyms getHyponymsByFileIndex(int indexFromFile) {
         if (indexFromFile > 0 && indexFromFile <= size) {
-            return indexOfWordNet[indexFromFile - 1];
+            return indexOfWordNet[indexFromFile];
         }
         return null;
     }
 
-    public void updateHyponyms(int indexOfHypernym, List<Integer> hyponyms) {
+    /*traversal */
+    public Set<Integer> traversal(Integer hypernym, int sizeOfSynsets) {
+        Set<Integer> hyponyms = new TreeSet<>();
+        boolean[] marked = new boolean[sizeOfSynsets];
+        Queue<Integer> fringe = new ArrayDeque<>();
+        fringe.add(hypernym);
+        marked[hypernym] = true;
+        while (!fringe.isEmpty()) {
+            int v = fringe.remove();
+            if (indexOfWordNet[v] != null) {
+                for (int w : indexOfWordNet[v].getListOfHyponyms()) {
+                    if (!marked[w]) {
+                        marked[w] = true;
+                        fringe.add(w);
+                        hyponyms.add(w);
+                    }
+                }
+            }
+        }
+        return hyponyms;
     }
 }

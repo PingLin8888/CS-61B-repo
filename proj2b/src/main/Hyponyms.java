@@ -15,8 +15,6 @@ public class Hyponyms {
         this.listOfHyponyms = new ArrayList<>(hyponyms);
     }
 
-
-
     public void addHyponym(int index) {
         listOfHyponyms.add(index);
     }

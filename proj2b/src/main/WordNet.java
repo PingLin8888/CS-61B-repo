@@ -3,11 +3,10 @@ package main;
 import edu.princeton.cs.algs4.In;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class WordNet{
+public class WordNet {
     MyGraph wordNetData;
-    final Map<Integer,String[]> indexToWord;
+    final Map<Integer, Set<String>> indexToWord;
 
     public WordNet(String synsetsFileName, String hyponymsFileName) {
         indexToWord = new HashMap<>();
@@ -18,61 +17,68 @@ public class WordNet{
             String[] splitLine = line.split(",");
             int index = Integer.parseInt(splitLine[0]);
             String[] words = splitLine[1].split(" ");
-            indexToWord.put(index, words);
+            Set<String> wordSet = new HashSet<>(Arrays.asList(words));
+            indexToWord.put(index, wordSet);
         }
         file = new In(hyponymsFileName);
         while (file.hasNextLine()) {
             String line = file.readLine();
             String[] splitLine = line.split(",");
             int indexOfHypernym = Integer.parseInt(splitLine[0]);
-            Hyponyms hyponyms = wordNetData.getHyponymsByFileIndex(indexOfHypernym);
-            if (hyponyms != null) {
-                for (int i = 0; i < splitLine.length - 1; i++) {
-                    hyponyms.addHyponym(Integer.parseInt(splitLine[i + 1]));
-                }
-                wordNetData.addNode(indexOfHypernym, hyponyms);
+            Hyponyms hyponyms = new Hyponyms();
+            for (int i = 1; i < splitLine.length; i++) {
+                hyponyms.addHyponym(Integer.parseInt(splitLine[i]));
             }
+            wordNetData.addNode(indexOfHypernym, hyponyms);
+
         }
     }
 
 
     public String getHyponyms(String hypernym) {
-        ArrayList<Integer> indexOfHypernyms = new ArrayList<>();
-        Set<Integer> indexOfResult = new HashSet<>();
-        Set<String> result = new TreeSet<>();
+        Set<Integer> indexOfHypernyms
+        for (String word : words) {
 
-        /*Search the word in the synsets. Find one, add the index to the indexOfHypernyms array. Could be more than one.*/
-        for (Map.Entry<Integer, String[]> entry : indexToWord.entrySet()) {
-            int key = entry.getKey();
-            String[] words = entry.getValue();
-            for (int i = 0; i < words.length; i++) {
-                if (hypernym.equals(words[i])) {
-                    indexOfHypernyms.add(key);
-                }
+        }
+        Set<Integer> indexOfHypernyms = getIndexOfHypernyms(hypernym);
+        Set<Integer> indexOfHyponyms = new HashSet<>();
+        indexOfHyponyms.addAll(indexOfHypernyms);
+        Set<String> result = new TreeSet<>();
+        result.add(hypernym);
+        int size = indexToWord.size();
+/*
+        Search the index in the wordnet to find hyponyms.
+*/
+        if (indexOfHypernyms != null) {
+            for (int index : indexOfHypernyms) {
+                indexOfHyponyms.addAll(wordNetData.traversal(index, size));
             }
         }
 
-        /*Search the index in the wordnet to find hyponyms.*/
-        for (int index : indexOfHypernyms) {
-            Hyponyms indexOfHyponyms = wordNetData.getHyponymsByFileIndex(index);
-            if (indexOfHyponyms != null) {
-                for (int i = 0; i < indexOfHyponyms.getSize(); i++) {
-                    indexOfResult.add(indexOfHyponyms.getIndex(i));
-                }
-            }
-            }
-
-        for (int index : indexOfResult) {
-            String[] hyponyms = indexToWord.get(index);
-            for (String hyponym : hyponyms) {
-                result.add(hyponym);
+        for (int index : indexOfHyponyms) {
+            if (indexToWord.containsKey(index)) {
+                result.addAll(indexToWord.get(index));
             }
         }
 
         return setToString(result);
     }
 
-/*Use stream to get hyponyms.*/
+    /*
+            Search the word in the synsets. Find one, add the index to the indexOfHypernyms array. Could be more than one.
+    */
+    private Set<Integer> getIndexOfHypernyms(String hypernym) {
+        Set<Integer> indexOfHypernyms = new HashSet<>();
+        for (Map.Entry<Integer, Set<String>> entry : indexToWord.entrySet()) {
+            Set<String> words = entry.getValue();
+            if (words.contains(hypernym)) {
+                indexOfHypernyms.add(entry.getKey());
+            }
+        }
+        return indexOfHypernyms;
+    }
+
+    /*Use stream to get hyponyms.*/
     /*public String getHyponyms(String hypernym) {
         Set<String> result = indexToWord.entrySet().stream()
                 .filter(entry -> Arrays.asList(entry.getValue()).contains(hypernym))
