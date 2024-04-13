@@ -1,6 +1,5 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,38 +19,31 @@ public class MyGraph{
     }
 
     public void addNode(int indexOfFile, Hyponyms listOfhyponyms) {
+//        if (indexOfFile >= indexOfWordNet.length) {
+//            indexOfWordNet.ensureCapacity
+//        }
+
         if (indexOfFile >= size) {
             Hyponyms[] newTemp = new Hyponyms[2 * size];
             newTemp = Arrays.copyOf(indexOfWordNet, 2 * size);
             indexOfWordNet = newTemp;
         }
-        indexOfWordNet[indexOfFile - 1] = listOfhyponyms;
+        if (indexOfWordNet[indexOfFile - 1] == null) {
+            indexOfWordNet[indexOfFile - 1] = new Hyponyms();
+        }
+        indexOfWordNet[indexOfFile - 1].addAll(listOfhyponyms.getListOfHyponyms());
         size++;
     }
 
-
-    public Hyponyms getHyponymsByIndex(int indexFormFile) {
-        return indexOfWordNet[indexFormFile - 1];
+    /*Avoid "Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 1000
+"*/
+    public Hyponyms getHyponymsByFileIndex(int indexFromFile) {
+        if (indexFromFile > 0 && indexFromFile <= size) {
+            return indexOfWordNet[indexFromFile - 1];
+        }
+        return null;
     }
 
     public void updateHyponyms(int indexOfHypernym, List<Integer> hyponyms) {
-    }
-
-
-    public class Hyponyms {
-        private List<Integer> listOfHyponyms;
-
-        public Hyponyms() {
-            listOfHyponyms = new ArrayList<>();
-        }
-
-        public Hyponyms(List<Integer> hyponyms) {
-            this.listOfHyponyms = hyponyms;
-        }
-
-        public void addHyponym(int index) {
-            listOfHyponyms.add(index);
-        }
-
     }
 }
