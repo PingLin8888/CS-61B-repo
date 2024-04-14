@@ -1,42 +1,36 @@
 import browser.NgordnetQuery;
 import browser.NgordnetQueryHandler;
-import org.junit.jupiter.api.Test;
 import main.AutograderBuddy;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/** Tests the most basic case for Hyponyms where the list of words is one word long, and k = 0.*/
-public class TestOneWordK0Hyponyms {
+/** Tests the case where the list of words is length greater than 1, but k is still zero. */
+public class TestMutiWordK0Hyponyms {
     // this case doesn't use the NGrams dataset at all, so the choice of files is irrelevant
     public static final String WORDS_FILE = "data/ngrams/very_short.csv";
     public static final String TOTAL_COUNTS_FILE = "data/ngrams/total_counts.csv";
     public static final String SMALL_SYNSET_FILE = "data/wordnet/synsets16.txt";
     public static final String SMALL_HYPONYM_FILE = "data/wordnet/hyponyms16.txt";
+    public static final String LARGE_SYNSET_FILE = "data/wordnet/synsets.txt";
+    public static final String LARGE_HYPONYM_FILE = "data/wordnet/hyponyms.txt";
 
+    /** This is an example from the spec.*/
     @Test
-    public void testActK0() {
+    public void testOccurrenceAndChangeK0() {
         NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymHandler(
                 WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
-        List<String> words = List.of("act");
+        List<String> words = List.of("occurrence", "change");
 
         NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0);
         String actual = studentHandler.handle(nq);
-        String expected = "[act, action, change, demotion, human_action, human_activity, variation]";
+        String expected = "[alteration, change, increase, jump, leap, modification, saltation, transition]";
         assertThat(actual).isEqualTo(expected);
     }
 
     // TODO: Add more unit tests (including edge case tests) here.
-    @Test
-    public void testCatK0() {
-        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymHandler(
-                WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
-        List<String> words = List.of("cat");
 
-        NgordnetQuery nq = new NgordnetQuery(words, 2000, 2010, 10);
-        String actual = studentHandler.handle(nq);
-        String expected = "[cat, guy, lion, ounce, painter, pussy, queen, tiger]";
-        assertThat(actual).isEqualTo(expected);
-    }
+    // TODO: Create similar unit test files for the k != 0 cases.
 }

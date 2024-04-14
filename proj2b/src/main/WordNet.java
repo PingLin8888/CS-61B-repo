@@ -56,7 +56,12 @@ public class WordNet {
         }
         NavigableMap<Integer, String> descendMap = frequency.descendingMap();
 //        SortedMap<Integer, String> firstKItems = descendMap.headMap(Math.min(k, descendMap.size()));
-        SortedMap<Integer, String> firstKItems = descendMap.headMap((Integer) descendMap.keySet().toArray()[Math.min(k - 1, descendMap.size())], true);
+        SortedMap<Integer, String> firstKItems;
+        if (!descendMap.isEmpty()) {
+            firstKItems = descendMap.headMap((Integer) descendMap.keySet().toArray()[Math.min(k - 1, descendMap.size())], true);
+        } else {
+            firstKItems = new TreeMap<>();
+        }
         return setToString(new HashSet<>(firstKItems.values()));
     }
 
@@ -121,12 +126,13 @@ public class WordNet {
     }*/
 
     private String setToString(Set<String> result) {
+        Set<String> alphabetical = new TreeSet<>(result);
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for (String s : result) {
+        for (String s : alphabetical) {
             sb.append(s).append(", ");
         }
-        if (!result.isEmpty()) {
+        if (!alphabetical.isEmpty()) {
             sb.setLength(sb.length() - 2);
         }
         sb.append("]");
