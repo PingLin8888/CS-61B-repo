@@ -30,38 +30,39 @@ public class WordNet {
                 hyponyms.addHyponym(Integer.parseInt(splitLine[i]));
             }
             wordNetData.addNode(indexOfHypernym, hyponyms);
-
         }
     }
 
-
-    public String getHyponyms(String hypernym) {
-        Set<Integer> indexOfHypernyms
+    public String getHyponyms(List<String> words, int startYear, int endYear, int k) {
+        Set<String> intersection = new TreeSet<>(getHyponymsOfOneWord(words.get(0)));
         for (String word : words) {
-
+            Set<String> hyponymsOfOneWord = getHyponymsOfOneWord(word);
+            intersection.retainAll(hyponymsOfOneWord);
         }
-        Set<Integer> indexOfHypernyms = getIndexOfHypernyms(hypernym);
+        return setToString(intersection);
+    }
+
+    private Set<String> getHyponymsOfOneWord(String word) {
+        Set<Integer> indexOfHypernyms = new TreeSet<>();
+        indexOfHypernyms.addAll(getIndexOfHypernyms(word));
         Set<Integer> indexOfHyponyms = new HashSet<>();
         indexOfHyponyms.addAll(indexOfHypernyms);
         Set<String> result = new TreeSet<>();
-        result.add(hypernym);
         int size = indexToWord.size();
-/*
-        Search the index in the wordnet to find hyponyms.
-*/
+
+        /*        Search the index in the wordnet to find hyponyms.
+         */
         if (indexOfHypernyms != null) {
             for (int index : indexOfHypernyms) {
                 indexOfHyponyms.addAll(wordNetData.traversal(index, size));
             }
         }
-
         for (int index : indexOfHyponyms) {
             if (indexToWord.containsKey(index)) {
                 result.addAll(indexToWord.get(index));
             }
         }
-
-        return setToString(result);
+        return result;
     }
 
     /*
