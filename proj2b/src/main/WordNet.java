@@ -1,14 +1,19 @@
 package main;
 
 import edu.princeton.cs.algs4.In;
+import ngrams.NGramMap;
+import ngrams.TimeSeries;
 
 import java.util.*;
 
 public class WordNet {
     MyGraph wordNetData;
+
+    NGramMap nGramMap;
     final Map<Integer, Set<String>> indexToWord;
 
-    public WordNet(String synsetsFileName, String hyponymsFileName) {
+    public WordNet(String synsetsFileName, String hyponymsFileName, String wordsFile, String countsFile) {
+
         indexToWord = new HashMap<>();
         wordNetData = new MyGraph();
         In file = new In(synsetsFileName);
@@ -31,6 +36,7 @@ public class WordNet {
             }
             wordNetData.addNode(indexOfHypernym, hyponyms);
         }
+        nGramMap = new NGramMap(wordsFile, countsFile);
     }
 
     public String getHyponyms(List<String> words, int startYear, int endYear, int k) {
@@ -39,7 +45,28 @@ public class WordNet {
             Set<String> hyponymsOfOneWord = getHyponymsOfOneWord(word);
             intersection.retainAll(hyponymsOfOneWord);
         }
-        return setToString(intersection);
+        if (k == 0) {
+            return setToString(intersection);
+        }
+        TreeMap<Integer, String> frequency = new TreeMap<>();
+
+        for (String word : intersection) {
+            TimeSeries ts = nGramMap.countHistory(word, startYear, endYear);
+            frequency.put(counts(ts), word);
+        }
+        NavigableMap<Integer, String> descendMap = frequency.descendingMap();
+//        SortedMap<Integer, String> firstKItems = descendMap.headMap(Math.min(k, descendMap.size()));
+        SortedMap<Integer, String> firstKItems = descendMap.headMap((Integer) descendMap.keySet().toArray()[Math.min(k - 1, descendMap.size())], true);
+        return setToString(new HashSet<>(firstKItems.values()));
+    }
+
+
+    private Integer counts(TimeSeries ts) {
+        double sum = 0;
+        for (double value : ts.values()) {
+            sum += value;
+        }
+        return (int) sum;
     }
 
     private Set<String> getHyponymsOfOneWord(String word) {

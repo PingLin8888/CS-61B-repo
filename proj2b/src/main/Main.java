@@ -19,7 +19,9 @@ public class Main {
 //        String hyponymsFile = "./data/wordnet/hyponyms16.txt";
         String synsetsFile = "./data/wordnet/synsets.txt";
         String hyponymsFile = "./data/wordnet/hyponyms.txt";
-        WordNet wordNet = new WordNet(synsetsFile, hyponymsFile);
+        String wordsFile = "./data/ngrams/top_49887_words.csv";
+        String countsFile = "./data/ngrams/total_counts.csv";
+        WordNet wordNet = new WordNet(synsetsFile, hyponymsFile, wordsFile, countsFile);
 
         hns.startUp();
         hns.register("history", new DummyHistoryHandler());
