@@ -1,14 +1,19 @@
 package hashmap;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
- *  A hash table-backed Map implementation.
+ * A hash table-backed Map implementation.
+ * <p>
+ * Assumes null keys will never be inserted, and does not resize down upon remove().
  *
- *  Assumes null keys will never be inserted, and does not resize down upon remove().
- *  @author YOUR NAME HERE
+ * @Ping Lin
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
+
 
     /**
      * Protected helper class to store key/value pairs
@@ -26,45 +31,109 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     /* Instance Variables */
     private Collection<Node>[] buckets;
+    private int size;
+    private double loadFactor;
     // You should probably define some more!
 
-    /** Constructors */
-    public MyHashMap() { }
+    /**
+     * Constructors
+     */
+    public MyHashMap() {
+        this(16, 0.75);
+    }
 
-    public MyHashMap(int initialCapacity) { }
+    public MyHashMap(int initialCapacity) {
+        this(initialCapacity, 0.75);
+    }
 
     /**
      * MyHashMap constructor that creates a backing array of initialCapacity.
      * The load factor (# items / # buckets) should always be <= loadFactor
      *
      * @param initialCapacity initial size of backing array
-     * @param loadFactor maximum load factor
+     * @param loadFactor      maximum load factor
      */
-    public MyHashMap(int initialCapacity, double loadFactor) { }
+    public MyHashMap(int initialCapacity, double loadFactor) {
+        size = 0;
+        this.loadFactor = loadFactor;
+        buckets = new Collection[initialCapacity];
+    }
 
     /**
      * Returns a data structure to be a hash table bucket
-     *
+     * <p>
      * The only requirements of a hash table bucket are that we can:
-     *  1. Insert items (`add` method)
-     *  2. Remove items (`remove` method)
-     *  3. Iterate through items (`iterator` method)
-     *
+     * 1. Insert items (`add` method)
+     * 2. Remove items (`remove` method)
+     * 3. Iterate through items (`iterator` method)
+     * <p>
      * Each of these methods is supported by java.util.Collection,
      * Most data structures in Java inherit from Collection, so we
      * can use almost any data structure as our buckets.
-     *
+     * <p>
      * Override this method to use different data structures as
      * the underlying bucket type
-     *
+     * <p>
      * BE SURE TO CALL THIS FACTORY METHOD INSTEAD OF CREATING YOUR
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
-        return null;
+        return new LinkedList<>();
     }
 
     // TODO: Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
+    @Override
+    public void put(K key, V value) {
+        int index = Math.floorMod(key.hashCode(), size);
+        Collection<Node> bucketList = buckets[index];
+        if (bucketList != null) {
+            Iterator<Node> iterator = bucketList.iterator();
+            while (iterator.hasNext()) {
+                Node node = iterator.next();
+                if (node.key.equals(key)) {
+                    node.value = value;
+                    return;
+                }
+            }
+            bucketList.add(new Node(key, value));
+        }
+/*will this bucket be null??? I assume no otherwise i have to new a linkedlist here which is against the intention.*/
+    }
 
+    @Override
+    public V get(K key) {
+        return null;
+    }
+
+    @Override
+    public boolean containsKey(K key) {
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public Set<K> keySet() {
+        throw new UnsupportedOperationException();
+
+    }
+
+    @Override
+    public V remove(K key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Iterator<K> iterator() {
+        throw new UnsupportedOperationException();
+    }
 }
