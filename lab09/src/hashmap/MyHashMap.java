@@ -13,8 +13,6 @@ import java.util.Set;
  * @Ping Lin
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
-
-
     /**
      * Protected helper class to store key/value pairs
      * The protected qualifier allows subclass access
@@ -57,6 +55,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         size = 0;
         this.loadFactor = loadFactor;
         buckets = new Collection[initialCapacity];
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = this.createBucket();
+        }
     }
 
     /**
@@ -78,6 +79,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
+
         return new LinkedList<>();
     }
 
@@ -85,30 +87,86 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     // Your code won't compile until you do so!
     @Override
     public void put(K key, V value) {
-        int index = Math.floorMod(key.hashCode(), size);
-        Collection<Node> bucketList = buckets[index];
-        if (bucketList != null) {
-            Iterator<Node> iterator = bucketList.iterator();
+        Collection<Node> bucket = getBucket(key);
+        if (bucket != null) {
+            Node node = findNode(key);
+            if (node != null) {
+                node.value = value;
+            } else {
+
+                putInBucket(bucket, key, value);
+            }
+        }
+    }
+
+    private void putInBucket(Collection<Node> bucket, K key, V value) {
+        boolean isOverLoaded = checkIfOverLoad(buckets.length, size);
+        if (isOverLoaded) {
+            resize(buckets.length * 2);
+        }
+        bucket.add(new Node(key, value));
+        size++;
+    }
+
+    private void resize(int newCapacity) {
+        Collection<Node>[] tempBuckets = buckets;
+        buckets = new Collection[newCapacity];
+        for (int i = 0; i < newCapacity; i++) {
+            buckets[i] = this.createBucket();
+        }
+        for (int i = 0; i < tempBuckets.length; i++) {
+            Iterator<Node> iterator = tempBuckets[i].iterator();
+            while (iterator.hasNext()) {
+                Node nextNode = iterator.next();
+                getBucket(nextNode.key).add(nextNode);
+            }
+        }
+    }
+
+    private boolean checkIfOverLoad(int length, int size) {
+        double loadFactorAfterPut = (size + 1.0) / length;
+        if (loadFactorAfterPut > loadFactor) {
+            return true;
+        }
+        return false;
+    }
+
+    /*will this bucket be null??? I assume no otherwise i have to new a linkedlist here which is against the intention.*/
+    @Override
+    public V get(K key) {
+        Node node = findNode(key);
+        if (node == null) {
+            return null;
+        } else {
+            return node.value;
+        }
+    }
+
+    private Node findNode(K key) {
+        if (size == 0) {
+            return null;
+        }
+        Collection<Node> bucket = getBucket(key);
+        if (bucket != null) {
+            Iterator<Node> iterator = bucket.iterator();
             while (iterator.hasNext()) {
                 Node node = iterator.next();
                 if (node.key.equals(key)) {
-                    node.value = value;
-                    return;
+                    return node;
                 }
             }
-            bucketList.add(new Node(key, value));
         }
-/*will this bucket be null??? I assume no otherwise i have to new a linkedlist here which is against the intention.*/
+        return null;
     }
 
-    @Override
-    public V get(K key) {
-        return null;
+    private Collection<Node> getBucket(K key) {
+        int index = Math.floorMod(key.hashCode(), buckets.length);
+        return buckets[index];
     }
 
     @Override
     public boolean containsKey(K key) {
-        return false;
+        return (findNode(key) != null);
     }
 
     @Override
@@ -116,9 +174,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return size;
     }
 
+    /**
+     * collection have clear method
+     */
     @Override
     public void clear() {
-
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i].clear();
+        }
+        size = 0;
     }
 
     @Override
