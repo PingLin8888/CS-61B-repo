@@ -93,20 +93,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             if (node != null) {
                 node.value = value;
             } else {
-
-                putInBucket(bucket, key, value);
+                bucket.add(new Node(key, value));
+                size++;
+                if (checkIfOverLoad(buckets.length, size)) {
+                    resize(buckets.length * 2);
+                }
             }
         }
     }
 
-    private void putInBucket(Collection<Node> bucket, K key, V value) {
-        boolean isOverLoaded = checkIfOverLoad(buckets.length, size);
-        if (isOverLoaded) {
-            resize(buckets.length * 2);
-        }
-        bucket.add(new Node(key, value));
-        size++;
-    }
 
     private void resize(int newCapacity) {
         Collection<Node>[] tempBuckets = buckets;
