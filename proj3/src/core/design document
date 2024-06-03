@@ -1,0 +1,41 @@
+Design Document Sections
+1. Classes and Data Structures
+Include here any class definitions. For each class, list the instance variables (if any). Include a
+brief description of each variable and its purpose in the class.
+
+class: room
+
+shape???
+width
+height
+
+location
+
+
+
+class: hallways
+width: 1
+length: random
+
+hasTurn
+
+direction(horizontal, ,,
+
+blocation
+
+
+
+2. Algorithms
+This is where you describe how your code works. For each class, include a high-level description of
+the methods in that class. That is, do not include a line-by-line breakdown of your code, but something you would write in a javadoc comment above a method, including any edge cases you are accounting for.
+
+random numbers of rooms and hallways???? these two must be seperated in different classes
+
+
+
+
+3. Persistence
+You should only tackle this section after you are done with 3A. This section should describe how you
+are going to save the state of a world, and load it again, following the requirements in the spec.
+Again, try to keep your explanations clear and short. Include all the components your program
+interacts with - classes, specific methods, and files you may create. You can check out lab 11.
