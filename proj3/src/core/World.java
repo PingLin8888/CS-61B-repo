@@ -3,8 +3,7 @@ package core;
 import tileengine.TETile;
 import tileengine.Tileset;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class World {
 
@@ -19,11 +18,13 @@ public class World {
     private TETile[][] world;
     private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
+    private Map<Room, List<Room>> graph;
 
     public World(Long seed) {
         rooms = new ArrayList<>();
         hallways = new ArrayList<>();
         random = new Random(seed);
+        graph = new HashMap<>();
         initializeWorld();
     }
 
@@ -49,6 +50,7 @@ public class World {
             }
         }
     }
+
 
     private boolean isColliding(Room newRoom) {
         for (Room room : rooms) {
@@ -77,7 +79,30 @@ public class World {
     }
 
     public void connectRooms(Room room1, Room room2) {
+        Hallway straightHallway = createHallway(room1, room2);
+        hallways.add(straightHallway);
+        placeHallway(straightHallway);
 
+
+        graph.get(room1).add(room2);
+        graph.get(room2).add(room1);
+    }
+
+    //in this way, I'm getting 2 hallways. Am i returning a list of hallways?
+    // If it's taken as a turn hallway, it's one.
+    //if x1=x2 or y1=y2,this won't be a turn hallway.
+    private Hallway createHallway(Room room1, Room room2) {
+        int x1 = room1.getPositionX() + room1.getWidth() / 2;
+        int y1 = room1.getPositionY() + room1.getHeight() / 2;
+        int x2 = room2.getPositionX() + room2.getWidth() / 2;
+        int y2 = room2.getPositionY() + room2.getHeight() / 2;
+        if (random.nextBoolean()) {
+
+        }
+    }
+
+    private void placeHallway(Hallway straightHallway) {
+        
     }
 
 }
