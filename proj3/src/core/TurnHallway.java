@@ -11,6 +11,21 @@ public class TurnHallway extends Hallway{
     }
 
 
+    public int getMidX() {
+        return midX;
+    }
+
+    public void setMidX(int midX) {
+        this.midX = midX;
+    }
+
+    public int getMidY() {
+        return midY;
+    }
+
+    public void setMidY(int midY) {
+        this.midY = midY;
+    }
 
     @Override
     public boolean equals(Object o) {

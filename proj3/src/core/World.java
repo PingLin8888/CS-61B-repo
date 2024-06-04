@@ -88,8 +88,36 @@ public class World {
     }
 
     private Iterable<Point> hallwayPoints(Hallway hallway) {
-
+        if (hallway instanceof StraightHallway) {
+            return getStraightHallwayPoints((StraightHallway) hallway);
+        } else {
+            TurnHallway turnHallway = (TurnHallway) hallway;
+            StraightHallway firstPartOfTurn = new StraightHallway(turnHallway.startX, turnHallway.startY, turnHallway.getMidX(), turnHallway.getMidY());
+            StraightHallway secondPartOfTurn = new StraightHallway(turnHallway.getMidX(), turnHallway.getMidY(), turnHallway.endX, turnHallway.endY);
+            List<Point> points = (List<Point>) getStraightHallwayPoints(firstPartOfTurn);
+            points.addAll((Collection<? extends Point>) getStraightHallwayPoints(secondPartOfTurn));
+            return points;
+        }
     }
+
+    private Iterable<Point> getStraightHallwayPoints(StraightHallway hallway) {
+        List<Point> points = new ArrayList<>();
+        if (hallway.isVertical()) {
+            for (int i = hallway.startX; i < hallway.startX + 3; i++) {
+                for (int j = hallway.startY; j <= hallway.endY; j++) {
+                    points.add(new Point(i, j));
+                }
+            }
+        } else if (hallway.isHorizontal()) {
+            for (int i = hallway.startX; i <= hallway.endX; i++) {
+                for (int j = hallway.startY; j < hallway.endY + 3; j++) {
+                    points.add(new Point(i, j));
+                }
+            }
+        }
+        return points;
+    }
+
 
     private void placeRoom(Room room) {
         int x = room.getPositionX();
@@ -111,6 +139,7 @@ public class World {
     public void connectRooms(Room room1, Room room2) {
         Hallway hallway = createHallway(room1, room2);
         hallways.add(hallway);
+        markUsed(hallwayPoints(hallway));
         placeHallway(hallway);
 
 
@@ -118,10 +147,12 @@ public class World {
         graph.get(room2).add(room1);
     }
 
-
+    //check if points in room1 and room2 share respectively have some points that shared the same x or y.
+    //yes, staight. get the point as the start point and end point;
+    // no, turn. take middle point of room1 as start point, room2 as end point.
     private Hallway createHallway(Room room1, Room room2) {
         if (isStraightHallway(room1, room2)) {
-            
+
             Hallway straight = new StraightHallway()
         }
     }
