@@ -1,5 +1,7 @@
 package core;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.Objects;
 
 public class Room {
@@ -15,17 +17,6 @@ public class Room {
         this.positionY = positionY;
     }
 
-    public boolean isOverlap(Room other){
-        int x1 = this.positionX;
-        int y1 = this.positionY;
-        int width1 = this.width;
-        int height1 = this.height;
-        int x2 = other.positionX;
-        int y2 = other.positionY;
-        int width2 = other.width;
-        int height2 = other.height;
-        return (x1 < x2 + width2) && (x1 + width1 > x2) && (y1 < y2 + height2) && (y1 + height1 > y2);
-    }
 
     public int getWidth() {
         return width;

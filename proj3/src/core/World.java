@@ -3,7 +3,9 @@ package core;
 import tileengine.TETile;
 import tileengine.Tileset;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class World {
 
@@ -19,6 +21,8 @@ public class World {
     private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
     private Map<Room, List<Room>> graph;
+
+    private Set<Point> usedSpaces;
 
     public World(Long seed) {
         rooms = new ArrayList<>();
@@ -44,21 +48,47 @@ public class World {
             int x = random.nextInt(WIDTH - width);
             int y = random.nextInt(HEIGHT - height);
             Room newRoom = new Room(width, height, x, y);
-            if (!isColliding(newRoom)) {
+            Iterable<Point> points = roomPoints(newRoom);
+            if (!isColliding(points)) {
                 rooms.add(newRoom);
+                markUsed(points);
                 placeRoom(newRoom);
             }
         }
     }
 
+    private void markUsed(Iterable<Point> points) {
+        for (Point p : points) {
+            usedSpaces.add(p);
+        }
+    }
 
-    private boolean isColliding(Room newRoom) {
-        for (Room room : rooms) {
-            if (room.isOverlap(newRoom)) {
+
+    private boolean isColliding(Iterable<Point> points) {
+        for (Point p : points) {
+            if (usedSpaces.contains(p)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private Iterable<Point> roomPoints(Room room) {
+        List<Point> points = new ArrayList<>();
+        int x = room.getPositionX();
+        int y = room.getPositionY();
+        int width = room.getWidth();
+        int height = room.getHeight();
+        for (int i = x; i <= x + width; i++) {
+            for (int j = y; j <= y + height; j++) {
+                points.add(new Point(i, j));
+            }
+        }
+        return points;
+    }
+
+    private Iterable<Point> hallwayPoints(Hallway hallway) {
+
     }
 
     private void placeRoom(Room room) {
@@ -79,26 +109,34 @@ public class World {
     }
 
     public void connectRooms(Room room1, Room room2) {
-        Hallway straightHallway = createHallway(room1, room2);
-        hallways.add(straightHallway);
-        placeHallway(straightHallway);
+        Hallway hallway = createHallway(room1, room2);
+        hallways.add(hallway);
+        placeHallway(hallway);
 
 
         graph.get(room1).add(room2);
         graph.get(room2).add(room1);
     }
 
-    //in this way, I'm getting 2 hallways. Am i returning a list of hallways?
-    // If it's taken as a turn hallway, it's one.
-    //if x1=x2 or y1=y2,this won't be a turn hallway.
-    private Hallway createHallway(Room room1, Room room2) {
-        int x1 = room1.getPositionX() + room1.getWidth() / 2;
-        int y1 = room1.getPositionY() + room1.getHeight() / 2;
-        int x2 = room2.getPositionX() + room2.getWidth() / 2;
-        int y2 = room2.getPositionY() + room2.getHeight() / 2;
-        if (random.nextBoolean()) {
 
+    private Hallway createHallway(Room room1, Room room2) {
+        if (isStraightHallway(room1, room2)) {
+            
+            Hallway straight = new StraightHallway()
         }
+    }
+
+    private boolean isStraightHallway(Room room1, Room room2) {
+        if (room2.getPositionY() > room1.getPositionY() + room1.getHeight()) {
+            if (room2.getPositionX() + room1.getWidth() < room1.getPositionX() || room2.getPositionX() > room1.getPositionX() + room1.getWidth()) {
+                return false;
+            }
+        } else if (room2.getPositionY() + room2.getHeight() < room1.getPositionY()) {
+            if (room2.getPositionX() + room1.getWidth() < room1.getPositionX() || room2.getPositionX() > room1.getPositionX() + room1.getWidth()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void placeHallway(Hallway straightHallway) {

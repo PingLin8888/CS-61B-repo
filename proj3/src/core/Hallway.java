@@ -2,7 +2,7 @@ package core;
 
 import java.util.Objects;
 
-abstract class Hallway {
+abstract class Hallway{
     protected int startX, startY;
     protected int endX, endY;
 
@@ -21,7 +21,6 @@ abstract class Hallway {
         return startX == endX;
     }
 
-    abstract boolean isOverlaping(Hallway other);
 
     public int getStartX() {
         return startX;

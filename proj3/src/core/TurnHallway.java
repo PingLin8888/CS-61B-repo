@@ -10,11 +10,7 @@ public class TurnHallway extends Hallway{
         super(startX, startY, endX, endY);
     }
 
-    @Override
-    boolean isOverlaping(Hallway other) {
 
-        return false;
-    }
 
     @Override
     public boolean equals(Object o) {
