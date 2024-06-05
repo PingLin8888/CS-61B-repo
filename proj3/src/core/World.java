@@ -29,6 +29,7 @@ public class World {
         hallways = new ArrayList<>();
         random = new Random(seed);
         graph = new HashMap<>();
+        usedSpaces = new HashSet<>();
         initializeWorld();
     }
 
@@ -36,6 +37,22 @@ public class World {
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 world[i][j] = UNUSED;
+            }
+        }
+    }
+
+    public void generateWorld(){
+        generateRoom(10);
+        for (int i = 0; i < rooms.size(); i++) {
+            for (int j = i + 1; j < rooms.size(); j++) {
+                connectRooms(rooms.get(i), rooms.get(j));
+            }
+        }
+        while (!areAllRoomsConnected()) {
+            Room room1 = rooms.get(random.nextInt(rooms.size()));
+            Room room2 = rooms.get(random.nextInt(rooms.size()));
+            if (!graph.get(room1).contains(room2)) {
+                connectRooms(room1, room2);
             }
         }
     }
@@ -51,10 +68,30 @@ public class World {
             Iterable<Point> points = roomPoints(newRoom);
             if (!isColliding(points)) {
                 rooms.add(newRoom);
+                graph.put(newRoom, new ArrayList<>());
                 markUsed(points);
                 placeRoom(newRoom);
             }
         }
+    }
+
+    private boolean areAllRoomsConnected(){
+        if (rooms.isEmpty()) {
+            return true;
+        }
+        Set<Room> visited = new HashSet<>();
+        Queue<Room> queue = new LinkedList<>();
+        queue.add(rooms.getFirst());
+        while (!queue.isEmpty()) {
+            Room current = queue.poll();
+            visited.add(current);
+            for (Room neighbour : graph.get(current)) {
+                if (!visited.contains(neighbour)) {
+                    queue.add(neighbour);
+                }
+            }
+        }
+        return visited.size() == rooms.size();
     }
 
     private void markUsed(Iterable<Point> points) {
@@ -149,31 +186,44 @@ public class World {
 
 
     private Hallway createHallway(Room room1, Room room2) {
-        if (isStraightHallway(room1, room2)) {
-
-            Hallway straight = new StraightHallway()
-        }
-    }
-
-    /**
-     * check if points in room1 and room2 share respectively have some points that shared the same x or y.
-     * yes, staight.
-     * @param room1
-     * @param room2
-     * @return
-     */
-    private boolean isStraightHallway(Room room1, Room room2) {
-        if (room2.getPositionY() > room1.getPositionY() + room1.getHeight()) {
-            if (room2.getPositionX() + room1.getWidth() < room1.getPositionX() || room2.getPositionX() > room1.getPositionX() + room1.getWidth()) {
-                return false;
+        int x1 = room1.getPositionX() + room1.getWidth() / 2;
+        int y1 = room1.getPositionY() + room1.getHeight() / 2;
+        Hallway hallway = new Hallway();
+        //vertical straight hallway
+        if (x1 >= room2.getPositionX() && x1 <= room2.getPositionX() + room2.getWidth()) {
+            //room2 is above room1
+            if (y1 < room2.getPositionY()) {
+                hallway = new StraightHallway(x1, y1 + room1.getHeight() / 2, x1, room2.getPositionY());
+            } else if (y1 > room2.getPositionY()) {
+                hallway = new StraightHallway(x1, y1 - room1.getHeight() / 2, x1, room2.getPositionY() + room2.getHeight());
             }
-        } else if (room2.getPositionY() + room2.getHeight() < room1.getPositionY()) {
-            if (room2.getPositionX() + room1.getWidth() < room1.getPositionX() || room2.getPositionX() > room1.getPositionX() + room1.getWidth()) {
-                return false;
+            //horizontal straight hallway
+        } else if (y1 >= room2.getPositionY() && y1 <= room2.getPositionY() + room2.getHeight()) {
+            //room2 is on the left of room1
+            if (x1 > room2.getPositionX()) {
+                hallway = new StraightHallway(x1 - room1.getWidth() / 2, y1, room2.getPositionX() + room2.getWidth(), y1);
+            } else if (x1 < room2.getPositionX()) {
+                hallway = new StraightHallway(x1 + room1.getWidth() / 2, y1, room2.getPositionX(), y1);
             }
         }
-        return true;
+        //turn hallway
+        else {
+            //room2 is on the left of room1. vertical first then horizontal
+            int midX;
+            int midY;
+            if (x1 > room2.getPositionX()) {
+                midX = room2.getPositionX();
+                midY = room1.getPositionY();
+            } else {
+                midX = room1.getPositionX();
+                midY = room2.getPositionY();
+            }
+            hallway = new TurnHallway(room1.getPositionX(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
+        }
+        return hallway;
     }
+
+
 
     private void placeHallway(Hallway hallway) {
         if (hallway instanceof StraightHallway) {
@@ -193,7 +243,9 @@ public class World {
         if (hallway.isVertical()) {
             for (int i = hallway.startX; i <= hallway.startX + 2; i += 2) {
                 for (int j = hallway.startY; j <= hallway.endY; j++) {
-                    world[i][j] = WALL;
+                    if (world[i][j] != FLOOR) {
+                        world[i][j] = WALL;
+                    }
                 }
             }
             for (int j = hallway.startY; j <= hallway.endY; j++) {
@@ -202,7 +254,9 @@ public class World {
         } else {
             for (int i = hallway.startX; i <= hallway.endX; i++) {
                 for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
-                    world[i][j] = WALL;
+                    if (world[i][j] != FLOOR) {
+                        world[i][j] = WALL;
+                    }
                 }
             }
             for (int i = hallway.startX; i <= hallway.endX; i++) {

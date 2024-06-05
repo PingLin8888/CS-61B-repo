@@ -8,6 +8,9 @@ public class TurnHallway extends Hallway{
 
     public TurnHallway(int startX, int startY, int midX, int midY, int endX, int endY) {
         super(startX, startY, endX, endY);
+        this.midX = midX;
+        this.midY = midY;
+
     }
 
 

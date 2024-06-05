@@ -2,9 +2,12 @@ package core;
 
 import java.util.Objects;
 
-abstract class Hallway{
+public class Hallway{
     protected int startX, startY;
     protected int endX, endY;
+
+    public Hallway() {
+    }
 
     public Hallway(int startX, int startY, int endX, int endY) {
         this.startX = startX;
