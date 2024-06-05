@@ -147,9 +147,7 @@ public class World {
         graph.get(room2).add(room1);
     }
 
-    //check if points in room1 and room2 share respectively have some points that shared the same x or y.
-    //yes, staight. get the point as the start point and end point;
-    // no, turn. take middle point of room1 as start point, room2 as end point.
+
     private Hallway createHallway(Room room1, Room room2) {
         if (isStraightHallway(room1, room2)) {
 
@@ -157,6 +155,13 @@ public class World {
         }
     }
 
+    /**
+     * check if points in room1 and room2 share respectively have some points that shared the same x or y.
+     * yes, staight.
+     * @param room1
+     * @param room2
+     * @return
+     */
     private boolean isStraightHallway(Room room1, Room room2) {
         if (room2.getPositionY() > room1.getPositionY() + room1.getHeight()) {
             if (room2.getPositionX() + room1.getWidth() < room1.getPositionX() || room2.getPositionX() > room1.getPositionX() + room1.getWidth()) {
@@ -170,8 +175,40 @@ public class World {
         return true;
     }
 
-    private void placeHallway(Hallway straightHallway) {
-        
+    private void placeHallway(Hallway hallway) {
+        if (hallway instanceof StraightHallway) {
+            placeStraightHallway(hallway);
+
+        } else {
+            //turn hallway
+            TurnHallway turnHallway = (TurnHallway) hallway;
+            StraightHallway firstPartOfTurn = new StraightHallway(turnHallway.startX, turnHallway.startY, turnHallway.getMidX(), turnHallway.getMidY());
+            StraightHallway secondPartOfTurn = new StraightHallway(turnHallway.getMidX(), turnHallway.getMidY(), turnHallway.endX, turnHallway.endY);
+            placeStraightHallway(firstPartOfTurn);
+            placeStraightHallway(secondPartOfTurn);
+        }
+    }
+
+    private void placeStraightHallway(Hallway hallway) {
+        if (hallway.isVertical()) {
+            for (int i = hallway.startX; i <= hallway.startX + 2; i += 2) {
+                for (int j = hallway.startY; j <= hallway.endY; j++) {
+                    world[i][j] = WALL;
+                }
+            }
+            for (int j = hallway.startY; j <= hallway.endY; j++) {
+                world[hallway.startX + 1][j] = FLOOR;
+            }
+        } else {
+            for (int i = hallway.startX; i <= hallway.endX; i++) {
+                for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
+                    world[i][j] = WALL;
+                }
+            }
+            for (int i = hallway.startX; i <= hallway.endX; i++) {
+                world[i][hallway.startY + 1] = FLOOR;
+            }
+        }
     }
 
 }
