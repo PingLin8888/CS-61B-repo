@@ -102,6 +102,5 @@ public class KnightWorld {
         TERenderer ter = new TERenderer();
         ter.initialize(width, height);
         ter.renderFrame(knightWorld.getTiles());
-
     }
 }

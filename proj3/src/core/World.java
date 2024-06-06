@@ -10,39 +10,40 @@ import java.util.List;
 public class World {
 
     // build your own world!
-    final private static int WIDTH = 100;
-    final private static int HEIGHT = 100;
+    final private static int WIDTH = 80;
+    final private static int HEIGHT = 50;
     final private static TETile UNUSED = Tileset.NOTHING;
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
-
-    private Random random;
-    private TETile[][] world;
+    private static final long SEED = 2873123;
+    private Random random ;
+    private TETile[][] map;
     private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
     private Map<Room, List<Room>> graph;
 
     private Set<Point> usedSpaces;
 
-    public World(Long seed) {
+    public World() {
         rooms = new ArrayList<>();
         hallways = new ArrayList<>();
-        random = new Random(seed);
+        random = new Random(SEED);
         graph = new HashMap<>();
         usedSpaces = new HashSet<>();
+        map = new TETile[WIDTH][HEIGHT];
         initializeWorld();
     }
 
     private void initializeWorld() {
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                world[i][j] = UNUSED;
+                map[i][j] = UNUSED;
             }
         }
     }
 
-    public void generateWorld(){
-        generateRoom(10);
+    public void buildWorld(){
+        generateRoom(1);
         for (int i = 0; i < rooms.size(); i++) {
             for (int j = i + 1; j < rooms.size(); j++) {
                 connectRooms(rooms.get(i), rooms.get(j));
@@ -163,12 +164,14 @@ public class World {
         int height = room.getHeight();
         for (int i = x + 1; i <= x + width - 1; i++) {
             for (int j = y + 1; j <= y + height - 1; j++) {
-                world[i][j] = FLOOR;
+                map[i][j] = FLOOR;
             }
         }
-        for (int i = x; i <= x + width; i += width) {
+        for (int i = x; i <= x + width; i++) {
+            map[i][y] = WALL;
+
             for (int j = y; j <= y + height; j += height) {
-                world[i][j] = WALL;
+                map[i][j] = WALL;
             }
         }
     }
@@ -243,26 +246,31 @@ public class World {
         if (hallway.isVertical()) {
             for (int i = hallway.startX; i <= hallway.startX + 2; i += 2) {
                 for (int j = hallway.startY; j <= hallway.endY; j++) {
-                    if (world[i][j] != FLOOR) {
-                        world[i][j] = WALL;
+                    if (map[i][j] != FLOOR) {
+                        map[i][j] = WALL;
                     }
                 }
             }
             for (int j = hallway.startY; j <= hallway.endY; j++) {
-                world[hallway.startX + 1][j] = FLOOR;
+                map[hallway.startX + 1][j] = FLOOR;
             }
         } else {
             for (int i = hallway.startX; i <= hallway.endX; i++) {
                 for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
-                    if (world[i][j] != FLOOR) {
-                        world[i][j] = WALL;
+                    if (map[i][j] != FLOOR) {
+                        map[i][j] = WALL;
                     }
                 }
             }
             for (int i = hallway.startX; i <= hallway.endX; i++) {
-                world[i][hallway.startY + 1] = FLOOR;
+                map[i][hallway.startY + 1] = FLOOR;
             }
         }
     }
+
+    public TETile[][] getMap() {
+        return map;
+    }
+
 
 }
