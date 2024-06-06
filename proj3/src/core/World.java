@@ -16,7 +16,7 @@ public class World {
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
     private static final long SEED = 2873123;
-    private Random random ;
+    private Random random;
     private TETile[][] map;
     private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
@@ -42,7 +42,7 @@ public class World {
         }
     }
 
-    public void buildWorld(){
+    public void buildWorld() {
         generateRoom(2);
         for (int i = 0; i < rooms.size(); i++) {
             for (int j = i + 1; j < rooms.size(); j++) {
@@ -76,7 +76,7 @@ public class World {
         }
     }
 
-    private boolean areAllRoomsConnected(){
+    private boolean areAllRoomsConnected() {
         if (rooms.isEmpty()) {
             return true;
         }
@@ -210,23 +210,14 @@ public class World {
                 hallway = new StraightHallway(x1 + room1.getWidth() / 2, y1, room2.getPositionX(), y1);
             }
         }
-        //turn hallway
+        //create turn hallway
         else {
-            int midX;
-            int midY;
-            //if room2 is on the left of room1. vertical first then horizontal
-            if (x1 > room2.getPositionX()) {
-                midX = room2.getPositionX();
-                midY = room1.getPositionY();
-            } else {
-                midX = room1.getPositionX();
-                midY = room2.getPositionY();
-            }
+            int midX = room2.getPositionX();
+            int midY = room1.getPositionY();
             hallway = new TurnHallway(room1.getPositionX(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
         }
         return hallway;
     }
-
 
 
     private void placeHallway(Hallway hallway) {
@@ -235,11 +226,36 @@ public class World {
         } else {
             //turn hallway
             TurnHallway turnHallway = (TurnHallway) hallway;
-            StraightHallway firstPartOfTurn = new StraightHallway(turnHallway.startX, turnHallway.startY, turnHallway.getMidX(), turnHallway.getMidY());
-            StraightHallway secondPartOfTurn = new StraightHallway(turnHallway.getMidX(), turnHallway.getMidY(), turnHallway.endX, turnHallway.endY);
-            placeStraightHallway(firstPartOfTurn);
-            placeStraightHallway(secondPartOfTurn);
+            placeTurnHallway(turnHallway);
         }
+    }
+
+    private void placeTurnHallway(TurnHallway hallway) {
+        int minX = Math.min(hallway.getStartX(), Math.min(hallway.getMidX(), hallway.getEndX()));
+        int maxX = Math.max(hallway.getStartX(), Math.max(hallway.getMidX(), hallway.getEndX()));
+        int minY = Math.min(hallway.getStartY(), Math.min(hallway.getMidY(), hallway.getEndY()));
+        int maxY = Math.max(hallway.getStartY(), Math.max(hallway.getMidY(), hallway.getEndY()));
+        //place horizontal part
+        for (int i = minX + 1; i <= maxX; i++) {
+            map[i][hallway.getMidY() + 1] = FLOOR;
+            if (map[i][hallway.getMidY()] != FLOOR) {
+                map[i][hallway.getMidY()] = WALL;
+            }
+            if (map[i][hallway.getMidY() + 2] != FLOOR) {
+                map[i][hallway.getMidY() + 2] = WALL;
+            }
+        }
+        //place vertical part
+        for (int j = minY + 1; j <= maxY; j++) {
+            map[hallway.getEndX() + 1][j] = FLOOR;
+            if (map[hallway.getEndX()][j] != FLOOR) {
+                map[hallway.getEndX()][j] = WALL;
+            }
+            if (map[hallway.getEndX() + 2][j] != FLOOR) {
+                map[hallway.getEndX() + 2][j] = WALL;
+            }
+        }
+        map[hallway.getMidX()][hallway.getMidY()+1] = WALL;
     }
 
     private void placeStraightHallway(Hallway hallway) {
