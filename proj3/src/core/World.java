@@ -206,7 +206,7 @@ public class World {
         else {
             int midX = room2.getPositionX();
             int midY = room1.getPositionY();
-            hallway = new TurnHallway(room1.getPositionX(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
+            hallway = new TurnHallway(room1.getPositionX() + room1.getWidth(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
         }
         return hallway;
     }
@@ -227,27 +227,24 @@ public class World {
         int maxX = Math.max(hallway.getStartX(), Math.max(hallway.getMidX(), hallway.getEndX()));
         int minY = Math.min(hallway.getStartY(), Math.min(hallway.getMidY(), hallway.getEndY()));
         int maxY = Math.max(hallway.getStartY(), Math.max(hallway.getMidY(), hallway.getEndY()));
-        //place horizontal part
-        for (int i = minX + 1; i <= maxX; i++) {
-            map[i][hallway.getMidY() + 1] = FLOOR;
-            if (map[i][hallway.getMidY()] != FLOOR) {
-                map[i][hallway.getMidY()] = WALL;
-            }
-            if (map[i][hallway.getMidY() + 2] != FLOOR) {
-                map[i][hallway.getMidY() + 2] = WALL;
-            }
+        int x1 = hallway.startX;
+        int x2 = hallway.getMidX();
+        int y1 = hallway.startY;
+        int y2 = hallway.endY;
+        drawLShape(x1, x2 + 1, y1 + 1, y2, FLOOR);
+        //lower wall
+        drawLShape(x1, x2 + 2, y1, y2, WALL);
+        //upper wall
+        drawLShape(x1, x2, y1 + 2, y2, WALL);
+    }
+
+    private void drawLShape(int x1, int x2, int y1, int y2, TETile tileSet) {
+        for (int i = x1; i <= x2; i++) {
+            map[i][y1] = tileSet;
         }
-        //place vertical part
-        for (int j = minY + 1; j <= maxY; j++) {
-            map[hallway.getEndX() + 1][j] = FLOOR;
-            if (map[hallway.getEndX()][j] != FLOOR) {
-                map[hallway.getEndX()][j] = WALL;
-            }
-            if (map[hallway.getEndX() + 2][j] != FLOOR) {
-                map[hallway.getEndX() + 2][j] = WALL;
-            }
+        for (int j = y1; j <= y2; j++) {
+            map[x2][j] = tileSet;
         }
-        map[hallway.getMidX()][hallway.getMidY() + 1] = WALL;
     }
 
     private void placeStraightHallway(Hallway hallway) {
