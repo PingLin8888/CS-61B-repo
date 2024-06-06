@@ -4,7 +4,8 @@ import org.checkerframework.checker.units.qual.A;
 
 import java.util.Objects;
 
-public class Room {
+public class Room implements Comparable<Room> {
+
     private int width;
     private int height;
     private int positionX;
@@ -61,5 +62,14 @@ public class Room {
     @Override
     public int hashCode() {
         return Objects.hash(width, height, positionX, positionY);
+    }
+
+
+    @Override
+    public int compareTo(Room o) {
+        if (this.positionY != o.positionY) {
+            return Integer.compare(this.positionY, o.positionY);
+        }
+        return Integer.compare(this.positionX,o.positionX);
     }
 }

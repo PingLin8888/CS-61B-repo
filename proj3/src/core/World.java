@@ -10,15 +10,15 @@ import java.util.List;
 public class World {
 
     // build your own world!
-    final private static int WIDTH = 80;
-    final private static int HEIGHT = 50;
+    final private static int WIDTH = 70;
+    final private static int HEIGHT = 40;
     final private static TETile UNUSED = Tileset.NOTHING;
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
     private static final long SEED = 2873123;
     private Random random;
     private TETile[][] map;
-    private ArrayList<Room> rooms;
+    private ArrayList<Room> rooms;//might sort the rooms base on the location
     private ArrayList<Hallway> hallways;
     private Map<Room, List<Room>> graph;
 
@@ -43,18 +43,9 @@ public class World {
     }
 
     public void buildWorld() {
-        generateRoom(2);
-        for (int i = 0; i < rooms.size(); i++) {
-            for (int j = i + 1; j < rooms.size(); j++) {
-                connectRooms(rooms.get(i), rooms.get(j));
-            }
-        }
-        while (!areAllRoomsConnected()) {
-            Room room1 = rooms.get(random.nextInt(rooms.size()));
-            Room room2 = rooms.get(random.nextInt(rooms.size()));
-            if (!graph.get(room1).contains(room2)) {
-                connectRooms(room1, room2);
-            }
+        generateRoom(4);
+        for (int i = 0; i < rooms.size() - 1; i++) {
+            connectRooms(rooms.get(i), rooms.get(i + 1));
         }
     }
 
@@ -74,6 +65,7 @@ public class World {
                 placeRoom(newRoom);
             }
         }
+        Collections.sort(rooms);
     }
 
     private boolean areAllRoomsConnected() {
@@ -255,7 +247,7 @@ public class World {
                 map[hallway.getEndX() + 2][j] = WALL;
             }
         }
-        map[hallway.getMidX()][hallway.getMidY()+1] = WALL;
+        map[hallway.getMidX()][hallway.getMidY() + 1] = WALL;
     }
 
     private void placeStraightHallway(Hallway hallway) {
