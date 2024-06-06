@@ -43,16 +43,19 @@ public class World {
     }
 
     public void buildWorld() {
-        generateRoom(4);
+        generateRoom(19);
+        Collections.sort(rooms);
         for (int i = 0; i < rooms.size() - 1; i++) {
             connectRooms(rooms.get(i), rooms.get(i + 1));
+            graph.get(rooms.get(i)).add(rooms.get(i + 1));
+            graph.get(rooms.get(i + 1)).add(rooms.get(i));
         }
     }
 
     public void generateRoom(int roomNums) {
         //room should be within the boundaries of the world grid.
-        for (int i = 0; i < roomNums; i++) {
-            int width = random.nextInt(5) + 3;
+        while (rooms.size() < roomNums) {
+            int width = random.nextInt(7) + 6;
             int height = random.nextInt(5) + 3;
             int x = random.nextInt(WIDTH - width - 2) + 1;
             int y = random.nextInt(HEIGHT - height - 2) + 1;
@@ -65,7 +68,6 @@ public class World {
                 placeRoom(newRoom);
             }
         }
-        Collections.sort(rooms);
     }
 
     private boolean areAllRoomsConnected() {
@@ -231,6 +233,7 @@ public class World {
         int x2 = hallway.getMidX();
         int y1 = hallway.startY;
         int y2 = hallway.endY;
+        //floor
         drawLShape(x1, x2 + 1, y1 + 1, y2, FLOOR);
         //lower wall
         drawLShape(x1, x2 + 2, y1, y2, WALL);
@@ -240,10 +243,19 @@ public class World {
 
     private void drawLShape(int x1, int x2, int y1, int y2, TETile tileSet) {
         for (int i = x1; i <= x2; i++) {
-            map[i][y1] = tileSet;
+            if (tileSet == FLOOR) {
+                map[i][y1] = tileSet;
+            } else if (map[i][y1] != FLOOR) {
+                map[i][y1] = tileSet;
+            }
         }
         for (int j = y1; j <= y2; j++) {
-            map[x2][j] = tileSet;
+            if (tileSet == FLOOR) {
+                map[x2][j] = tileSet;
+            } else if (map[x2][j] != FLOOR) {
+                map[x2][j] = tileSet;
+            }
+
         }
     }
 
