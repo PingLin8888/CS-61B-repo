@@ -18,6 +18,5 @@ public class Main {
 
         teRenderer.renderFrame(world.getMap());
 
-
     }
 }

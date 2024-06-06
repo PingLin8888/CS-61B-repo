@@ -43,7 +43,7 @@ public class World {
     }
 
     public void buildWorld(){
-        generateRoom(1);
+        generateRoom(2);
         for (int i = 0; i < rooms.size(); i++) {
             for (int j = i + 1; j < rooms.size(); j++) {
                 connectRooms(rooms.get(i), rooms.get(j));
@@ -63,8 +63,8 @@ public class World {
         for (int i = 0; i < roomNums; i++) {
             int width = random.nextInt(5) + 3;
             int height = random.nextInt(5) + 3;
-            int x = random.nextInt(WIDTH - width);
-            int y = random.nextInt(HEIGHT - height);
+            int x = random.nextInt(WIDTH - width - 2) + 1;
+            int y = random.nextInt(HEIGHT - height - 2) + 1;
             Room newRoom = new Room(width, height, x, y);
             Iterable<Point> points = roomPoints(newRoom);
             if (!isColliding(points)) {
@@ -147,7 +147,7 @@ public class World {
                 }
             }
         } else if (hallway.isHorizontal()) {
-            for (int i = hallway.startX; i <= hallway.endX; i++) {
+            for (int i = hallway.startX; i >= hallway.endX; i--) {
                 for (int j = hallway.startY; j < hallway.endY + 3; j++) {
                     points.add(new Point(i, j));
                 }
@@ -162,17 +162,18 @@ public class World {
         int y = room.getPositionY();
         int width = room.getWidth();
         int height = room.getHeight();
-        for (int i = x + 1; i <= x + width - 1; i++) {
-            for (int j = y + 1; j <= y + height - 1; j++) {
+        for (int i = x + 1; i < x + width; i++) {
+            for (int j = y + 1; j < y + height; j++) {
                 map[i][j] = FLOOR;
             }
         }
         for (int i = x; i <= x + width; i++) {
             map[i][y] = WALL;
-
-            for (int j = y; j <= y + height; j += height) {
-                map[i][j] = WALL;
-            }
+            map[i][y + height] = WALL;
+        }
+        for (int j = y; j <= y + height; j++) {
+            map[x][j] = WALL;
+            map[x + width][j] = WALL;
         }
     }
 
@@ -211,9 +212,9 @@ public class World {
         }
         //turn hallway
         else {
-            //room2 is on the left of room1. vertical first then horizontal
             int midX;
             int midY;
+            //if room2 is on the left of room1. vertical first then horizontal
             if (x1 > room2.getPositionX()) {
                 midX = room2.getPositionX();
                 midY = room1.getPositionY();
@@ -231,7 +232,6 @@ public class World {
     private void placeHallway(Hallway hallway) {
         if (hallway instanceof StraightHallway) {
             placeStraightHallway(hallway);
-
         } else {
             //turn hallway
             TurnHallway turnHallway = (TurnHallway) hallway;
@@ -255,14 +255,14 @@ public class World {
                 map[hallway.startX + 1][j] = FLOOR;
             }
         } else {
-            for (int i = hallway.startX; i <= hallway.endX; i++) {
+            for (int i = hallway.startX; i >= hallway.endX; i--) {
                 for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
                     if (map[i][j] != FLOOR) {
                         map[i][j] = WALL;
                     }
                 }
             }
-            for (int i = hallway.startX; i <= hallway.endX; i++) {
+            for (int i = hallway.startX; i >= hallway.endX; i--) {
                 map[i][hallway.startY + 1] = FLOOR;
             }
         }
