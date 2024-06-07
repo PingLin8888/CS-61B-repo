@@ -72,4 +72,12 @@ public class Room implements Comparable<Room> {
         }
         return Integer.compare(this.positionX,o.positionX);
     }
+
+    public double calculateDistance(Room room2) {
+        int x1 = this.getPositionX() + this.getWidth() / 2;
+        int y1 = this.getPositionY() + this.getHeight() / 2;
+        int x2 = room2.getPositionX() + room2.getWidth() / 2;
+        int y2 = room2.getPositionY() + room2.getHeight() / 2;
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
 }

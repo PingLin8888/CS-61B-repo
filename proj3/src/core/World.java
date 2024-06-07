@@ -45,10 +45,44 @@ public class World {
     public void buildWorld() {
         generateRoom(9);
         Collections.sort(rooms);
-        for (int i = 0; i < rooms.size() - 1; i++) {
-            connectRooms(rooms.get(i), rooms.get(i + 1));
-            graph.get(rooms.get(i)).add(rooms.get(i + 1));
-            graph.get(rooms.get(i + 1)).add(rooms.get(i));
+        connectRoomsWithMST();
+//        for (int i = 0; i < rooms.size() - 1; i++) {
+//            connectRooms(rooms.get(i), rooms.get(i + 1));
+//            graph.get(rooms.get(i)).add(rooms.get(i + 1));
+//            graph.get(rooms.get(i + 1)).add(rooms.get(i));
+//        }
+    }
+
+    private void connectRoomsWithMST() {
+        if (rooms.isEmpty()) {
+            return;
+        }
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingDouble(edge -> edge.getDistance()));
+        Set<Room> inMST = new HashSet<>();
+        Room startRoom = rooms.get(0);
+        inMST.add(startRoom);
+
+        for (Room room : rooms) {
+            if (!inMST.contains(startRoom)) {
+                pq.add(new Edge(startRoom, room, startRoom.calculateDistance(room)));
+            }
+        }
+
+        while ((inMST.size() < rooms.size())) {
+            Edge minEdge = pq.poll();
+            if (inMST.contains(minEdge.getRoom1()) && inMST.contains(minEdge.getRoom2())) {
+                continue;
+            }
+            Room newRoom = inMST.contains(minEdge.getRoom1()) ? minEdge.getRoom2() : minEdge.getRoom1();
+            inMST.add(newRoom);
+
+            connectRooms(minEdge.getRoom1(), minEdge.getRoom2());
+
+            for (Room room : rooms) {
+                if (!inMST.contains(room)) {
+                    pq.add(new Edge(newRoom, room, newRoom.calculateDistance(room)));
+                }
+            }
         }
     }
 
@@ -171,15 +205,27 @@ public class World {
         }
     }
 
+    //should check if place hallway is successful, if not. connect in another hallway.
     public void connectRooms(Room room1, Room room2) {
-        Hallway hallway = createHallway(room1, room2);
-        hallways.add(hallway);
-        markUsed(hallwayPoints(hallway));
+        Hallway hallway = new Hallway();
+        if (room1.getPositionY() > room2.getPositionY()) {
+            hallway = createHallway(room2, room1);
+
+        } else {
+            hallway = createHallway(room1, room2);
+        }
+        boolean isColliding = isColliding(hallwayPoints(hallway));
         placeHallway(hallway);
+        markUsed(hallwayPoints(hallway));
+        hallways.add(hallway);
+        if (!isColliding) {
 
+        } else {
 
-        graph.get(room1).add(room2);
-        graph.get(room2).add(room1);
+        }
+
+//        graph.get(room1).add(room2);
+//        graph.get(room2).add(room1);
     }
 
 
