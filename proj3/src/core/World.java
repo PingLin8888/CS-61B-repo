@@ -43,7 +43,7 @@ public class World {
     }
 
     public void buildWorld() {
-        generateRoom(5);
+        generateRoom(9);
         Collections.sort(rooms);
         for (int i = 0; i < rooms.size() - 1; i++) {
             connectRooms(rooms.get(i), rooms.get(i + 1));
