@@ -43,7 +43,7 @@ public class World {
     }
 
     public void buildWorld() {
-        generateRoom(19);
+        generateRoom(5);
         Collections.sort(rooms);
         for (int i = 0; i < rooms.size() - 1; i++) {
             connectRooms(rooms.get(i), rooms.get(i + 1));
@@ -208,7 +208,14 @@ public class World {
         else {
             int midX = room2.getPositionX();
             int midY = room1.getPositionY();
-            hallway = new TurnHallway(room1.getPositionX() + room1.getWidth(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
+            if (room1.getPositionX() <= room2.getPositionX()) {
+                //room2 is on the right of room1
+                hallway = new TurnHallway(room1.getPositionX() + room1.getWidth() - 1, room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
+
+            } else {
+                //room2 is on the left of room1
+                hallway = new TurnHallway(room1.getPositionX(), room1.getPositionY(), midX, midY, room2.getPositionX(), room2.getPositionY());
+            }
         }
         return hallway;
     }
@@ -225,35 +232,50 @@ public class World {
     }
 
     private void placeTurnHallway(TurnHallway hallway) {
-        int minX = Math.min(hallway.getStartX(), Math.min(hallway.getMidX(), hallway.getEndX()));
-        int maxX = Math.max(hallway.getStartX(), Math.max(hallway.getMidX(), hallway.getEndX()));
-        int minY = Math.min(hallway.getStartY(), Math.min(hallway.getMidY(), hallway.getEndY()));
-        int maxY = Math.max(hallway.getStartY(), Math.max(hallway.getMidY(), hallway.getEndY()));
         int x1 = hallway.startX;
         int x2 = hallway.getMidX();
         int y1 = hallway.startY;
         int y2 = hallway.endY;
-        //floor
-        drawLShape(x1, x2 + 1, y1 + 1, y2, FLOOR);
-        //lower wall
-        drawLShape(x1, x2 + 2, y1, y2, WALL);
-        //upper wall
-        drawLShape(x1, x2, y1 + 2, y2, WALL);
+        if (x1 <= x2) {
+            //room2 is on the right,above room1
+            //floor
+            drawLShape(x1, x2 + 1, y1 + 1, y2, FLOOR, false);
+            //lower wall
+            drawLShape(x1, x2 + 2, y1, y2, WALL, false);
+            //upper wall
+            drawLShape(x1, x2, y1 + 2, y2, WALL, false);
+        } else {
+            //room2 is on the left, above room1
+            //floor
+            drawLShape(x2 + 1, x1, y1 + 1, y2, FLOOR, true);
+            //lower wall
+            drawLShape(x2, x1, y1, y2, WALL, true);
+            //upper wall
+            drawLShape(x2 + 2, x1, y1 + 2, y2, WALL, true);
+        }
+
     }
 
-    private void drawLShape(int x1, int x2, int y1, int y2, TETile tileSet) {
-        for (int i = x1; i <= x2; i++) {
+    private void drawLShape(int smallX, int bigX, int smallY, int bigY, TETile tileSet, boolean isBasedOnSmallX) {
+        //draw the horizontal first
+        int i, j;
+        for (i = smallX; i <= bigX; i++) {
             if (tileSet == FLOOR) {
-                map[i][y1] = tileSet;
-            } else if (map[i][y1] != FLOOR) {
-                map[i][y1] = tileSet;
+                map[i][smallY] = tileSet;
+            } else if (map[i][smallY] != FLOOR) {
+                map[i][smallY] = tileSet;
             }
         }
-        for (int j = y1; j <= y2; j++) {
+        //then the vertical part
+        for (j = smallY; j <= bigY; j++) {
+            int x = smallX;
+            if (!isBasedOnSmallX) {
+                x = bigX;
+            }
             if (tileSet == FLOOR) {
-                map[x2][j] = tileSet;
-            } else if (map[x2][j] != FLOOR) {
-                map[x2][j] = tileSet;
+                map[x][j] = tileSet;
+            } else if (map[x][j] != FLOOR) {
+                map[x][j] = tileSet;
             }
 
         }
