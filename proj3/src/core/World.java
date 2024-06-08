@@ -20,7 +20,6 @@ public class World {
     private TETile[][] map;
     private ArrayList<Room> rooms;//might sort the rooms base on the location
     private ArrayList<Hallway> hallways;
-    private Map<Room, List<Room>> graph;
 
     private Set<Point> usedSpaces;
 
@@ -28,7 +27,6 @@ public class World {
         rooms = new ArrayList<>();
         hallways = new ArrayList<>();
         random = new Random(SEED);
-        graph = new HashMap<>();
         usedSpaces = new HashSet<>();
         map = new TETile[WIDTH][HEIGHT];
         initializeWorld();
@@ -92,7 +90,6 @@ public class World {
             Iterable<Point> points = roomPoints(newRoom);
             if (!isColliding(points)) {
                 rooms.add(newRoom);
-                graph.put(newRoom, new ArrayList<>());
                 markUsed(points);
                 placeRoom(newRoom);
             }
