@@ -80,4 +80,14 @@ public class Room implements Comparable<Room> {
         int y2 = room2.getPositionY() + room2.getHeight() / 2;
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "width=" + width +
+                ", height=" + height +
+                ", positionX=" + positionX +
+                ", positionY=" + positionY +
+                '}';
+    }
 }

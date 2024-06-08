@@ -177,6 +177,7 @@ public class World {
         } else {
             hallway = createHallway(room1, room2);
         }
+//        System.out.println("Connecting rooms. \n room1 is index:" + rooms.indexOf(room1) + " " + room1.toString() + "\nroom2 is index:" + rooms.indexOf(room2) + " " + room2.toString());
         placeHallway(hallway);
         hallways.add(hallway);
     }
@@ -293,14 +294,21 @@ public class World {
                 map[hallway.startX + 1][j] = FLOOR;
             }
         } else {
-            for (int i = hallway.startX; i >= hallway.endX; i--) {
+            int startX = hallway.startX;
+            int endX = hallway.endX;
+            if (startX > endX) {
+                int temp = startX;
+                startX = endX;
+                endX = startX;
+            }
+            for (int i = startX; i <= endX; i++) {
                 for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
                     if (map[i][j] != FLOOR) {
                         map[i][j] = WALL;
                     }
                 }
             }
-            for (int i = hallway.startX; i >= hallway.endX; i--) {
+            for (int i = startX; i <= endX; i++) {
                 map[i][hallway.startY + 1] = FLOOR;
             }
         }
@@ -309,6 +317,4 @@ public class World {
     public TETile[][] getMap() {
         return map;
     }
-
-
 }
