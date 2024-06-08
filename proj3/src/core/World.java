@@ -15,7 +15,7 @@ public class World {
     final private static TETile UNUSED = Tileset.NOTHING;
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
-    private static final long SEED = 2873123;
+    private long SEED;
     private Random random;
     private TETile[][] map;
     private ArrayList<Room> rooms;//might sort the rooms base on the location
@@ -23,7 +23,8 @@ public class World {
 
     private Set<Point> usedSpaces;
 
-    public World() {
+    public World(Long seed) {
+        SEED = seed;
         rooms = new ArrayList<>();
         hallways = new ArrayList<>();
         random = new Random(SEED);
