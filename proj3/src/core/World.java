@@ -10,8 +10,8 @@ import java.util.List;
 public class World {
 
     // build your own world!
-    final private static int WIDTH = 70;
-    final private static int HEIGHT = 40;
+    final private static int WIDTH = 80;
+    final private static int HEIGHT = 45;
     final private static TETile UNUSED = Tileset.NOTHING;
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
@@ -43,7 +43,7 @@ public class World {
     }
 
     public void buildWorld() {
-        generateRoom(12);
+        generateRoom(40);
         Collections.sort(rooms);
         connectRoomsWithMST();
     }
@@ -188,7 +188,7 @@ public class World {
         int y1 = room1.getPositionY() + room1.getHeight() / 2;
         Hallway hallway = new Hallway();
         //vertical straight hallway
-        if (x1 >= room2.getPositionX() && x1 <= room2.getPositionX() + room2.getWidth()) {
+        if (x1 >= room2.getPositionX() + 2 && x1 <= room2.getPositionX() + room2.getWidth() - 2) {
             //room2 is above room1
             if (y1 < room2.getPositionY()) {
                 hallway = new StraightHallway(x1, y1 + room1.getHeight() / 2, x1, room2.getPositionY());
@@ -196,7 +196,7 @@ public class World {
                 hallway = new StraightHallway(x1, y1 - room1.getHeight() / 2, x1, room2.getPositionY() + room2.getHeight());
             }
             //horizontal straight hallway
-        } else if (y1 >= room2.getPositionY() && y1 <= room2.getPositionY() + room2.getHeight()) {
+        } else if (y1 >= room2.getPositionY() + 2 && y1 <= room2.getPositionY() + room2.getHeight() - 2) {
             //room2 is on the left of room1
             if (x1 > room2.getPositionX()) {
                 hallway = new StraightHallway(x1 - room1.getWidth() / 2, y1, room2.getPositionX() + room2.getWidth(), y1);
