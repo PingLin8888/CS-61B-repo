@@ -2,6 +2,9 @@ package core;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Room implements Comparable<Room> {
@@ -79,6 +82,20 @@ public class Room implements Comparable<Room> {
         int x2 = room2.getPositionX() + room2.getWidth() / 2;
         int y2 = room2.getPositionY() + room2.getHeight() / 2;
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
+    public Iterable<Point> roomPoints() {
+        List<Point> points = new ArrayList<>();
+        int x = this.getPositionX();
+        int y = this.getPositionY();
+        int width = this.getWidth();
+        int height = this.getHeight();
+        for (int i = x; i <= x + width; i++) {
+            for (int j = y; j <= y + height; j++) {
+                points.add(new Point(i, j));
+            }
+        }
+        return points;
     }
 
     @Override

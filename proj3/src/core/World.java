@@ -92,7 +92,7 @@ public class World {
             int x = random.nextInt(WIDTH - width - 2) + 1;
             int y = random.nextInt(HEIGHT - height - 2) + 1;
             Room newRoom = new Room(width, height, x, y);
-            Iterable<Point> points = roomPoints(newRoom);
+            Iterable<Point> points = newRoom.roomPoints();
             if (!isColliding(points)) {
                 rooms.add(newRoom);
                 markUsed(points);
@@ -117,19 +117,6 @@ public class World {
         return false;
     }
 
-    private Iterable<Point> roomPoints(Room room) {
-        List<Point> points = new ArrayList<>();
-        int x = room.getPositionX();
-        int y = room.getPositionY();
-        int width = room.getWidth();
-        int height = room.getHeight();
-        for (int i = x; i <= x + width; i++) {
-            for (int j = y; j <= y + height; j++) {
-                points.add(new Point(i, j));
-            }
-        }
-        return points;
-    }
 
     private void placeRoom(Room room) {
         int x = room.getPositionX();
