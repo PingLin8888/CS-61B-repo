@@ -14,7 +14,7 @@ public class Main {
         int height = world.getMap()[0].length;
         teRenderer.initialize(width, height);
 
-        world.buildWorld();
+        world.buildWorld(50);
 
         teRenderer.renderFrame(world.getMap());
 
