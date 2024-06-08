@@ -269,7 +269,6 @@ public class World {
                 int temp = startX;
                 startX = endX;
                 endX = temp;
-
             }
             for (int i = startX; i <= endX; i++) {
                 for (int j = hallway.startY; j <= hallway.startY + 2; j += 2) {
