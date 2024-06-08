@@ -99,25 +99,6 @@ public class World {
         }
     }
 
-    private boolean areAllRoomsConnected() {
-        if (rooms.isEmpty()) {
-            return true;
-        }
-        Set<Room> visited = new HashSet<>();
-        Queue<Room> queue = new LinkedList<>();
-        queue.add(rooms.getFirst());
-        while (!queue.isEmpty()) {
-            Room current = queue.poll();
-            visited.add(current);
-            for (Room neighbour : graph.get(current)) {
-                if (!visited.contains(neighbour)) {
-                    queue.add(neighbour);
-                }
-            }
-        }
-        return visited.size() == rooms.size();
-    }
-
     private void markUsed(Iterable<Point> points) {
         for (Point p : points) {
             usedSpaces.add(p);
