@@ -10,48 +10,52 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class GameMenu extends JFrame {
-
     private StringBuilder seedBuilder = new StringBuilder();
     private JLabel seedLabel = new JLabel("Enter seed: ");
     private boolean enteringSeed = false;
 
     public GameMenu() {
         setTitle("CS61B: THE GAME");
-        setSize(400, 500);
+        setSize(1200, 800);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel(new GridLayout(4, 1));
-        JButton newGameButton = new JButton("NEW GAME (N)");
-        JButton loadButton = new JButton("LOAD GAME (L)");
-        JButton quitButton = new JButton("QUIT (Q)");
-
-        newGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startSeedEntry();
-            }
-        });
-
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadGame();
-            }
-        });
-
-        quitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                quitGame();
 
 
-            }
-        });
+        MenuPanel panel = new MenuPanel();
+        panel.setLayout(new GridLayout(3, 1));
+//        JPanel panel = new JPanel(new GridLayout(4, 1));
 
-        panel.add(newGameButton);
-        panel.add(loadButton);
-        panel.add(quitButton);
-        panel.add(seedLabel);
+//        JButton newGameButton = new JButton("NEW GAME (N)");
+//        JButton loadButton = new JButton("LOAD GAME (L)");
+//        JButton quitButton = new JButton();"QUIT (Q)"
+
+//        newGameButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                startSeedEntry();
+//            }
+//        });
+//
+//        loadButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                loadGame();
+//            }
+//        });
+//
+//        quitButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                quitGame();
+//
+//
+//            }
+//        });
+//
+//        panel.add(newGameButton);
+//        panel.add(loadButton);
+//        panel.add(quitButton);
+//        panel.add(seedLabel);
 
         add(panel);
         setVisible(true);
@@ -154,6 +158,29 @@ public class GameMenu extends JFrame {
             System.exit(0);
         }
         JOptionPane.showMessageDialog(null, "Quiting game...");
+    }
+
+    //AI generated
+    private class MenuPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setFont(new Font("Serif", Font.BOLD, 48));
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("CS61B: THE GAME", getWidth() / 4, getHeight() / 4);
+
+            g2d.setFont(new Font("Serif", Font.PLAIN, 24));
+            g2d.drawString("New Game (N)", getWidth() / 3, getHeight() / 2);
+            g2d.drawString("Load Game (L)", getWidth() / 3, getHeight() / 2 + 30);
+            g2d.drawString("Quit (Q)", getWidth() / 3, getHeight() / 2 + 60);
+
+            if (enteringSeed) {
+                g2d.setFont(new Font("Serif", Font.PLAIN, 24));
+                g2d.drawString("Enter seed: " + seedBuilder.toString(), getWidth() / 3, getHeight() - 100);
+            }
+        }
     }
 
 }
