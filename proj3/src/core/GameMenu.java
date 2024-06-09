@@ -129,8 +129,6 @@ public class GameMenu extends JFrame {
         int height = world.getMap()[0].length;
         teRenderer.initialize(width, height);
 
-        world.buildWorld(40);
-
         teRenderer.renderFrame(world.getMap());
     }
 

@@ -1,5 +1,6 @@
 package core;
 
+import tileengine.TERenderer;
 import tileengine.TETile;
 import tileengine.Tileset;
 
@@ -18,9 +19,15 @@ public class AutograderBuddy {
      * @return the 2D TETile[][] representing the state of the world
      */
     public static TETile[][] getWorldFromInput(String input) {
-
-        throw new RuntimeException("Please fill out AutograderBuddy!");
-
+        World world = new World();
+        if (input.toLowerCase().startsWith("n") && input.toLowerCase().endsWith("s")) {
+            Long seed = Long.parseLong(input.substring(1, input.length() - 2));
+            world = new World(seed);
+        }
+        if (input.toLowerCase().endsWith("q")) {
+//            saveGame();
+        }
+        return world.getMap();
     }
 
 

@@ -5,7 +5,6 @@ import tileengine.Tileset;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class World {
 
@@ -15,19 +14,39 @@ public class World {
     final private static TETile UNUSED = Tileset.NOTHING;
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
-    private long SEED;
+    final private static long SEEDDefault = 87654L;
+    final private static int ROOMNumDefault = 40;
+
+    private long seed;
     private Random random;
     private TETile[][] map;
-    private ArrayList<Room> rooms;//might sort the rooms base on the location
+    private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
-
     private Set<Point> usedSpaces;
+    private int roomNum;
+
+    public World() {
+        this(SEEDDefault, ROOMNumDefault);
+    }
 
     public World(Long seed) {
-        SEED = seed;
+        this(seed, ROOMNumDefault);
+    }
+
+    public World(int roomNum) {
+        this(SEEDDefault, roomNum);
+    }
+
+    public World(long seed, int roomNum) {
+        this.seed = seed;
+        this.roomNum = roomNum;
+        initializeWorldComponents();
+    }
+
+    private void initializeWorldComponents() {
         rooms = new ArrayList<>();
         hallways = new ArrayList<>();
-        random = new Random(SEED);
+        random = new Random(seed);
         usedSpaces = new HashSet<>();
         map = new TETile[WIDTH][HEIGHT];
         initializeWorld();
@@ -39,6 +58,7 @@ public class World {
                 map[i][j] = UNUSED;
             }
         }
+        this.buildWorld(roomNum);
     }
 
     public void buildWorld(int num) {
