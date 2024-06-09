@@ -1,117 +1,70 @@
 package core;
 
-import org.checkerframework.checker.units.qual.K;
 import tileengine.TERenderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
+/**
+ * Created by gpt
+ */
 public class GameMenu extends JFrame {
     private StringBuilder seedBuilder = new StringBuilder();
-    private JLabel seedLabel = new JLabel("Enter seed: ");
     private boolean enteringSeed = false;
+    private MenuPanel menuPanel;
+    private JLabel promptLabel;
 
     public GameMenu() {
         setTitle("CS61B: THE GAME");
-        setSize(1200, 800);
+        setSize(600, 800);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        MenuPanel panel = new MenuPanel();
-        panel.setLayout(new GridLayout(3, 1));
-//        JPanel panel = new JPanel(new GridLayout(4, 1));
+        menuPanel = new MenuPanel();
+        add(menuPanel);
 
-//        JButton newGameButton = new JButton("NEW GAME (N)");
-//        JButton loadButton = new JButton("LOAD GAME (L)");
-//        JButton quitButton = new JButton();"QUIT (Q)"
 
-//        newGameButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                startSeedEntry();
-//            }
-//        });
-//
-//        loadButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                loadGame();
-//            }
-//        });
-//
-//        quitButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                quitGame();
-//
-//
-//            }
-//        });
-//
-//        panel.add(newGameButton);
-//        panel.add(loadButton);
-//        panel.add(quitButton);
-//        panel.add(seedLabel);
-
-        add(panel);
-        setVisible(true);
-
-        // Add Key Bindings for "N", "L", and "Q" keys
-        InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = panel.getActionMap();
-
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), "startNewGame");
-        actionMap.put("startNewGame", new AbstractAction() {
+        addKeyListener(new KeyListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                startSeedEntry();
+            public void keyTyped(KeyEvent e) {
             }
-        });
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), "loadGame");
-        actionMap.put("loadGame", new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                loadGame();
-            }
-        });
-
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0), "quitGame");
-        actionMap.put("quitGame", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                quitGame();
-            }
-        });
-
-        for (int i = 0; i <= 9; i++) {
-            int num = i;
-            inputMap.put(KeyStroke.getKeyStroke((char) ('0' + i)), "enterDigit" + i);
-            actionMap.put("enterDigit" + i, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (enteringSeed) {
-                        seedBuilder.append(num);
+            public void keyPressed(KeyEvent e) {
+                if (enteringSeed) {
+                    if (Character.isDigit(e.getKeyChar())) {
+                        seedBuilder.append(e.getKeyChar());
                         updateSeedLabel();
+                    } else if (e.getKeyChar() == 's' || e.getKeyChar() == 'S') {
+                        finalizeSeed();
+                    }
+                } else {
+                    switch (e.getKeyChar()) {
+                        case 'n':
+                        case 'N':
+                            startSeedEntry();
+                            break;
+                        case 'l':
+                        case 'L':
+                            loadGame();
+                            break;
+                        case 'q':
+                        case 'Q':
+                            quitGame();
+                            break;
                     }
                 }
-            });
-        }
+            }
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "finaliseSeed");
-        actionMap.put("finaliseSeed", new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (enteringSeed) {
-                    finalizeSeed();
-                }
+            public void keyReleased(KeyEvent e) {
             }
         });
-        panel.requestFocusInWindow();
+
+        setVisible(true);
     }
 
     private void finalizeSeed() {
@@ -119,7 +72,8 @@ public class GameMenu extends JFrame {
             Long seed = Long.parseLong(seedBuilder.toString());
             startNewGameWithSeed(seed);
             enteringSeed = false;
-            seedLabel.setText("Enter Seed: ");
+            menuPanel.remove(promptLabel);
+            menuPanel.repaint();
         } else {
             JOptionPane.showMessageDialog(null, "Seed cannot be empty. Please enter a valid seed.");
         }
@@ -138,14 +92,21 @@ public class GameMenu extends JFrame {
 
 
     private void updateSeedLabel() {
-        seedLabel.setText("Enter seed: " + seedBuilder.toString());
+        promptLabel.setText("Enter seed: " + seedBuilder.toString());
+        menuPanel.repaint();
     }
 
     private void startSeedEntry() {
-        JOptionPane.showMessageDialog(null, "Creating a new game. Please enter a new seed.");
         enteringSeed = true;
         seedBuilder.setLength(0);
-        updateSeedLabel();
+        promptLabel = new JLabel("Enter seed: ");
+        promptLabel.setFont(new Font("Serif", Font.PLAIN, 24));
+        promptLabel.setForeground(Color.WHITE);
+        menuPanel.removeAll();
+        menuPanel.setLayout(new GridBagLayout());
+        menuPanel.add(promptLabel);
+        menuPanel.revalidate();
+        menuPanel.repaint();
     }
 
     private void loadGame() {
@@ -160,25 +121,33 @@ public class GameMenu extends JFrame {
         JOptionPane.showMessageDialog(null, "Quiting game...");
     }
 
-    //AI generated
     private class MenuPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            setBackground(Color.BLACK);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw the title
             g2d.setFont(new Font("Serif", Font.BOLD, 48));
             g2d.setColor(Color.WHITE);
-            g2d.drawString("CS61B: THE GAME", getWidth() / 4, getHeight() / 4);
+            String title = "CS61B: THE GAME";
+            FontMetrics fm = g2d.getFontMetrics();
+            int titleX = (getWidth() - fm.stringWidth(title)) / 2;
+            int titleY = getHeight() / 4;
+            g2d.drawString(title, titleX, titleY);
 
-            g2d.setFont(new Font("Serif", Font.PLAIN, 24));
-            g2d.drawString("New Game (N)", getWidth() / 3, getHeight() / 2);
-            g2d.drawString("Load Game (L)", getWidth() / 3, getHeight() / 2 + 30);
-            g2d.drawString("Quit (Q)", getWidth() / 3, getHeight() / 2 + 60);
-
-            if (enteringSeed) {
+            if (!enteringSeed) {
+                // Draw the options
                 g2d.setFont(new Font("Serif", Font.PLAIN, 24));
-                g2d.drawString("Enter seed: " + seedBuilder.toString(), getWidth() / 3, getHeight() - 100);
+                String[] options = {"New Game (N)", "Load Game (L)", "Quit (Q)"};
+                for (int i = 0; i < options.length; i++) {
+                    String option = options[i];
+                    int optionX = (getWidth() - fm.stringWidth(option)) / 2;
+                    int optionY = getHeight() / 2 + (i * 50);
+                    g2d.drawString(option, optionX, optionY);
+                }
             }
         }
     }
