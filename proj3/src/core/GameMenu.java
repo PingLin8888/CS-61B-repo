@@ -20,7 +20,7 @@ public class GameMenu extends JFrame {
         setSize(400, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel(new GridLayout(3, 1));
+        JPanel panel = new JPanel(new GridLayout(4, 1));
         JButton newGameButton = new JButton("NEW GAME (N)");
         JButton loadButton = new JButton("LOAD GAME (L)");
         JButton quitButton = new JButton("QUIT (Q)");
@@ -51,6 +51,7 @@ public class GameMenu extends JFrame {
         panel.add(newGameButton);
         panel.add(loadButton);
         panel.add(quitButton);
+        panel.add(seedLabel);
 
         add(panel);
         setVisible(true);
@@ -95,7 +96,6 @@ public class GameMenu extends JFrame {
                     }
                 }
             });
-
         }
 
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "finaliseSeed");
@@ -107,7 +107,7 @@ public class GameMenu extends JFrame {
                 }
             }
         });
-
+        panel.requestFocusInWindow();
     }
 
     private void finalizeSeed() {
@@ -122,6 +122,7 @@ public class GameMenu extends JFrame {
     }
 
     private void startNewGameWithSeed(Long seed) {
+        JOptionPane.showMessageDialog(null, "Start new game with seed: " + seed);
         World world = new World(seed);
         TERenderer teRenderer = new TERenderer();
         int width = world.getMap().length;
@@ -139,6 +140,7 @@ public class GameMenu extends JFrame {
     }
 
     private void startSeedEntry() {
+        JOptionPane.showMessageDialog(null, "Creating a new game. Please enter a new seed.");
         enteringSeed = true;
         seedBuilder.setLength(0);
         updateSeedLabel();
@@ -156,9 +158,6 @@ public class GameMenu extends JFrame {
         JOptionPane.showMessageDialog(null, "Quiting game...");
     }
 
-    private void startNewGame() {
-
-    }
 }
 
 

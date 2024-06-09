@@ -44,11 +44,6 @@ public class World {
     public void buildWorld(int num) {
         generateRoom(num);
         Collections.sort(rooms);
-//        for (Room r : rooms) {
-//            if (r.getPositionX() > WIDTH / 2) {
-//                System.out.println("Room index is: " + rooms.indexOf(r) + " " + r.toString());
-//            }
-//        }
         connectRoomsWithMST();
     }
 
@@ -88,7 +83,7 @@ public class World {
     public void generateRoom(int roomNums) {
         //room should be within the boundaries of the world grid.
         while (rooms.size() < roomNums) {
-            int width = random.nextInt(5) + 3;
+            int width = random.nextInt(10) + 5;
             int height = random.nextInt(5) + 3;
             int x = random.nextInt(WIDTH - width - 2) + 1;
             int y = random.nextInt(HEIGHT - height - 2) + 1;
@@ -141,7 +136,7 @@ public class World {
 
     //should check if place hallway is successful, if not. connect in another hallway.
     public void connectRooms(Room room1, Room room2) {
-        System.out.println("Connecting rooms. \n room1 is index:" + rooms.indexOf(room1) + " " + room1.toString() + "\nroom2 is index:" + rooms.indexOf(room2) + " " + room2.toString());
+//        System.out.println("Connecting rooms. \n room1 is index:" + rooms.indexOf(room1) + " " + room1.toString() + "\nroom2 is index:" + rooms.indexOf(room2) + " " + room2.toString());
         Hallway hallway = new Hallway();
         if (room1.getPositionY() > room2.getPositionY()) {
             hallway = createHallway(room2, room1);
