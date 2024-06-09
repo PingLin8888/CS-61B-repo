@@ -15,7 +15,6 @@ public class World {
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
     final private static long SEEDDefault = 87654L;
-    final private static int ROOMNumDefault = 40;
 
     private long seed;
     private Random random;
@@ -23,23 +22,13 @@ public class World {
     private ArrayList<Room> rooms;
     private ArrayList<Hallway> hallways;
     private Set<Point> usedSpaces;
-    private int roomNum;
 
     public World() {
-        this(SEEDDefault, ROOMNumDefault);
+        this(SEEDDefault);
     }
 
     public World(Long seed) {
-        this(seed, ROOMNumDefault);
-    }
-
-    public World(int roomNum) {
-        this(SEEDDefault, roomNum);
-    }
-
-    public World(long seed, int roomNum) {
         this.seed = seed;
-        this.roomNum = roomNum;
         initializeWorldComponents();
     }
 
@@ -58,11 +47,11 @@ public class World {
                 map[i][j] = UNUSED;
             }
         }
-        this.buildWorld(roomNum);
+        this.buildWorld();
     }
 
-    public void buildWorld(int num) {
-        generateRoom(num);
+    public void buildWorld() {
+        generateRoom();
         Collections.sort(rooms);
         connectRoomsWithMST();
     }
@@ -100,7 +89,8 @@ public class World {
         }
     }
 
-    public void generateRoom(int roomNums) {
+    public void generateRoom() {
+        int roomNums = random.nextInt(50) + 5;
         //room should be within the boundaries of the world grid.
         while (rooms.size() < roomNums) {
             int width = random.nextInt(10) + 5;
@@ -156,7 +146,6 @@ public class World {
 
     //should check if place hallway is successful, if not. connect in another hallway.
     public void connectRooms(Room room1, Room room2) {
-//        System.out.println("Connecting rooms. \n room1 is index:" + rooms.indexOf(room1) + " " + room1.toString() + "\nroom2 is index:" + rooms.indexOf(room2) + " " + room2.toString());
         Hallway hallway = new Hallway();
         if (room1.getPositionY() > room2.getPositionY()) {
             hallway = createHallway(room2, room1);
