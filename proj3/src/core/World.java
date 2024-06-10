@@ -338,4 +338,7 @@ public class World {
 
     public void saveGame() {
     }
+
+    public void loadGame() {
+    }
 }

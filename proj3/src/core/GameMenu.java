@@ -11,191 +11,136 @@ import java.awt.event.KeyListener;
 /**
  * Created by gpt
  */
-public class GameMenu extends JFrame {
-    private StringBuilder seedBuilder = new StringBuilder();
-    private boolean enteringSeed = false;
-    private MenuPanel menuPanel;
-    private JLabel promptLabel;
-    private TERenderer teRenderer;
-    private World world;
+public class GameMenu{
+    private static World world;
+    private static TERenderer ter;
 
-    public GameMenu() {
-        setTitle("CS61B: THE GAME");
-        setSize(600, 800);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private static StringBuilder seedBuilder = new StringBuilder();
+    private static boolean enteringSeed = false;
+    private static boolean gameStarted = false;
+    private static boolean redraw = true;
 
 
-        menuPanel = new MenuPanel();
-        add(menuPanel);
+    public static void main(String[] args) {
+        StdDraw.setCanvasSize(800, 600);
+        ter = new TERenderer();
 
-
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println("Key pressed: " + e.getKeyChar()); // Debug print
-
-                if (enteringSeed) {
-                    if (Character.isDigit(e.getKeyChar())) {
-                        seedBuilder.append(e.getKeyChar());
-                        updateSeedLabel();
-                    } else if (e.getKeyChar() == 's' || e.getKeyChar() == 'S') {
-                        finalizeSeed();
-                    }
+        while (true) {
+            if (redraw) {
+                StdDraw.clear(StdDraw.BLACK);
+                if (!enteringSeed && !gameStarted) {
+                    drawMenu();
+                } else if (enteringSeed) {
+                    drawSeedEntry();
                 } else {
-                    switch (Character.toLowerCase(e.getKeyChar())) {
-                        case 'n':
-                            startSeedEntry();
-                            break;
-                        case 'l':
-                            loadGame();
-                            break;
-                        case 'q':
-                            quitGame();
-                            break;
-                        case ':':
-                            if (e.isControlDown()) {
-                                char nextChar = e.getKeyChar();
-                                if (nextChar == 'q' || nextChar == 'Q') {
-                                    world.saveGame();
-                                    System.exit(0);
-                                }
-                            }
-                            break;
-                    }
+                    ter.renderFrame(world.getMap());
                 }
+                StdDraw.show();
+                redraw = false;
             }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-        });
-
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(false); // Ensure KeyListener gets key events
-        setVisible(true);
-    }
-
-    private void finalizeSeed() {
-        if (seedBuilder.length() > 0) {
-            Long seed = Long.parseLong(seedBuilder.toString());
-            System.out.println("Finalizing seed: " + seed); // Debug print
-            enteringSeed = false;
-            menuPanel.remove(promptLabel);
-            menuPanel.repaint();
-            startNewGameWithSeed(seed);
-        } else {
-            JOptionPane.showMessageDialog(null, "Seed cannot be empty. Please enter a valid seed.");
+            handleInput();
+            StdDraw.pause(20);
         }
     }
 
-    private void startNewGameWithSeed(Long seed) {
-        JOptionPane.showMessageDialog(null, "Start new game with seed: " + seed);
-        world = new World(seed);
-        if (world == null) {
-            System.out.println("World initialization failed"); // Debug print
-        } else {
-            System.out.println("World initialized successfully"); // Debug print
-        }
-        teRenderer = new TERenderer();
-        int width = world.getMap().length;
-        int height = world.getMap()[0].length;
-        teRenderer.initialize(width, height);
-
-        teRenderer.renderFrame(world.getMap());
-
-        // Switch to StdDraw for input and rendering
-        runGameLoop();
+    private static void drawMenu() {
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(0.5, 0.75, "CS61B: THE GAME");
+        StdDraw.text(0.5, 0.5, "New Game (N)");
+        StdDraw.text(0.5, 0.45, "Load Game (L)");
+        StdDraw.text(0.5, 0.4, "Quit (Q)");
     }
 
-    private void runGameLoop() {
-        boolean hasNextKeyTyped = StdDraw.hasNextKeyTyped();
-            if (hasNextKeyTyped) {
-                char key = StdDraw.nextKeyTyped();
-                System.out.println("Key pressed in StdDraw: " + key); // Debug print
-                switch (Character.toLowerCase(key)) {
-                    case 'w':
-                    case 'a':
-                    case 's':
-                    case 'd':
-                        System.out.println("Moving avatar in StdDraw: " + key); // Debug print
-                        if (world != null) {
-                            world.moveAvatar(key);
-                            teRenderer.renderFrame(world.getMap());
-                        } else {
-                            System.out.println("world is null");
-                        }
+    private static void drawSeedEntry() {
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(0.5, 0.5, "Enter seed: " + seedBuilder.toString());
+    }
+
+    private static void handleInput() {
+        if (StdDraw.hasNextKeyTyped()) {
+            char key = StdDraw.nextKeyTyped();
+            redraw = true; // Set redraw flag to true for any key press
+            if (enteringSeed) {
+                if (Character.isDigit(key)) {
+                    seedBuilder.append(key);
+                } else if (key == 's' || key == 'S') {
+                    finalizeSeed();
+                }
+            } else {
+                switch (key) {
+                    case 'N':
+                    case 'n':
+                        enteringSeed = true;
+                        seedBuilder.setLength(0);
+                        break;
+                    case 'L':
+                    case 'l':
+                        loadGame();
+                        break;
+                    case 'Q':
+                    case 'q':
+                        System.exit(0);
                         break;
                 }
-        }
-    }
-
-
-    private void updateSeedLabel() {
-        promptLabel.setText("Enter seed: " + seedBuilder.toString());
-        menuPanel.repaint();
-    }
-
-    private void startSeedEntry() {
-        enteringSeed = true;
-        seedBuilder.setLength(0);
-        promptLabel = new JLabel("Enter seed: ");
-        promptLabel.setFont(new Font("Serif", Font.PLAIN, 24));
-        promptLabel.setForeground(Color.WHITE);
-        menuPanel.removeAll();
-        menuPanel.setLayout(new GridBagLayout());
-        menuPanel.add(promptLabel);
-        menuPanel.revalidate();
-        menuPanel.repaint();
-    }
-
-    private void loadGame() {
-        JOptionPane.showMessageDialog(null, "Loading game...");
-    }
-
-    private void quitGame() {
-        int confirm = JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Confirm exit", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
-        JOptionPane.showMessageDialog(null, "Quiting game...");
-    }
-
-    private class MenuPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            setBackground(Color.BLACK);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Draw the title
-            g2d.setFont(new Font("Serif", Font.BOLD, 48));
-            g2d.setColor(Color.WHITE);
-            String title = "CS61B: THE GAME";
-            FontMetrics fm = g2d.getFontMetrics();
-            int titleX = (getWidth() - fm.stringWidth(title)) / 2;
-            int titleY = getHeight() / 4;
-            g2d.drawString(title, titleX, titleY);
-
-            if (!enteringSeed) {
-                // Draw the options
-                g2d.setFont(new Font("Serif", Font.PLAIN, 24));
-                String[] options = {"New Game (N)", "Load Game (L)", "Quit (Q)"};
-                for (int i = 0; i < options.length; i++) {
-                    String option = options[i];
-                    int optionX = (getWidth() - fm.stringWidth(option)) / 2;
-                    int optionY = getHeight() / 2 + (i * 50);
-                    g2d.drawString(option, optionX, optionY);
-                }
+            }
+        } else if (gameStarted) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char moveKey = StdDraw.nextKeyTyped();
+                handleMovement(moveKey);
+                redraw = true; // Set redraw flag to true if there's movement
             }
         }
     }
 
+    private static void finalizeSeed() {
+        if (seedBuilder.length() > 0) {
+            long seed = Long.parseLong(seedBuilder.toString());
+            world = new World(seed);
+            int width = world.getMap().length;
+            int height = world.getMap()[0].length;
+            ter.initialize(width, height);
+
+            enteringSeed = false;
+            gameStarted = true;
+            StdDraw.clear();
+            ter.renderFrame(world.getMap());
+            redraw = true; // Set redraw flag to true after seed entry
+        } else {
+            StdDraw.text(0.5, 0.5, "Seed cannot be empty. Please enter a valid seed.");
+            StdDraw.show();
+        }
+    }
+
+    private static void loadGame() {
+        world = new World();
+        world.loadGame();
+        int width = world.getMap().length;
+        int height = world.getMap()[0].length;
+        ter.initialize(width, height);
+        gameStarted = true;
+        ter.renderFrame(world.getMap());
+        redraw = true; // Set redraw flag to true after loading game
+    }
+
+    private static void handleMovement(char key) {
+        switch (Character.toLowerCase(key)) {
+            case 'w':
+            case 'a':
+            case 's':
+            case 'd':
+                world.moveAvatar(key);
+                break;
+            case ':':
+                if (StdDraw.hasNextKeyTyped()) {
+                    char nextKey = StdDraw.nextKeyTyped();
+                    if (nextKey == 'Q' || nextKey == 'q') {
+                        world.saveGame();
+                        System.exit(0);
+                    }
+                }
+                break;
+        }
+    }
 }
 
 
