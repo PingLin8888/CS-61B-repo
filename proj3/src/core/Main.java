@@ -1,5 +1,6 @@
 package core;
 
+import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
 
 import javax.swing.*;
@@ -10,7 +11,6 @@ public class Main {
 
         // build your own world!
         //main menu with options. navigate via keyboard
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -1,5 +1,6 @@
 package core;
 
+import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
 
 import javax.swing.*;
@@ -56,21 +57,6 @@ public class GameMenu extends JFrame {
                         case 'q':
                             quitGame();
                             break;
-                        case 'w':
-                        case 'a':
-                        case 's':
-                        case 'd':
-                            System.out.println("Moving avatar: " + e.getKeyChar()); // Debug print
-
-                            if (world != null) {
-                                System.out.println("would is not null");
-                                world.moveAvatar(e.getKeyChar());
-                                teRenderer.renderFrame(world.getMap());
-                            } else {
-                                System.out.println("would is null");
-                            }
-                            repaint();
-                            break;
                         case ':':
                             if (e.isControlDown()) {
                                 char nextChar = e.getKeyChar();
@@ -98,11 +84,10 @@ public class GameMenu extends JFrame {
         if (seedBuilder.length() > 0) {
             Long seed = Long.parseLong(seedBuilder.toString());
             System.out.println("Finalizing seed: " + seed); // Debug print
-
-            startNewGameWithSeed(seed);
             enteringSeed = false;
             menuPanel.remove(promptLabel);
             menuPanel.repaint();
+            startNewGameWithSeed(seed);
         } else {
             JOptionPane.showMessageDialog(null, "Seed cannot be empty. Please enter a valid seed.");
         }
@@ -123,6 +108,30 @@ public class GameMenu extends JFrame {
 
         teRenderer.renderFrame(world.getMap());
 
+        // Switch to StdDraw for input and rendering
+        runGameLoop();
+    }
+
+    private void runGameLoop() {
+        boolean hasNextKeyTyped = StdDraw.hasNextKeyTyped();
+            if (hasNextKeyTyped) {
+                char key = StdDraw.nextKeyTyped();
+                System.out.println("Key pressed in StdDraw: " + key); // Debug print
+                switch (Character.toLowerCase(key)) {
+                    case 'w':
+                    case 'a':
+                    case 's':
+                    case 'd':
+                        System.out.println("Moving avatar in StdDraw: " + key); // Debug print
+                        if (world != null) {
+                            world.moveAvatar(key);
+                            teRenderer.renderFrame(world.getMap());
+                        } else {
+                            System.out.println("world is null");
+                        }
+                        break;
+                }
+        }
     }
 
 
