@@ -15,6 +15,8 @@ public class GameMenu extends JFrame {
     private boolean enteringSeed = false;
     private MenuPanel menuPanel;
     private JLabel promptLabel;
+    private TERenderer teRenderer;
+    private World world;
 
     public GameMenu() {
         setTitle("CS61B: THE GAME");
@@ -34,6 +36,8 @@ public class GameMenu extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                System.out.println("Key pressed: " + e.getKeyChar()); // Debug print
+
                 if (enteringSeed) {
                     if (Character.isDigit(e.getKeyChar())) {
                         seedBuilder.append(e.getKeyChar());
@@ -42,18 +46,39 @@ public class GameMenu extends JFrame {
                         finalizeSeed();
                     }
                 } else {
-                    switch (e.getKeyChar()) {
+                    switch (Character.toLowerCase(e.getKeyChar())) {
                         case 'n':
-                        case 'N':
                             startSeedEntry();
                             break;
                         case 'l':
-                        case 'L':
                             loadGame();
                             break;
                         case 'q':
-                        case 'Q':
                             quitGame();
+                            break;
+                        case 'w':
+                        case 'a':
+                        case 's':
+                        case 'd':
+                            System.out.println("Moving avatar: " + e.getKeyChar()); // Debug print
+
+                            if (world != null) {
+                                System.out.println("would is not null");
+                                world.moveAvatar(e.getKeyChar());
+                                teRenderer.renderFrame(world.getMap());
+                            } else {
+                                System.out.println("would is null");
+                            }
+                            repaint();
+                            break;
+                        case ':':
+                            if (e.isControlDown()) {
+                                char nextChar = e.getKeyChar();
+                                if (nextChar == 'q' || nextChar == 'Q') {
+                                    world.saveGame();
+                                    System.exit(0);
+                                }
+                            }
                             break;
                     }
                 }
@@ -64,12 +89,16 @@ public class GameMenu extends JFrame {
             }
         });
 
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false); // Ensure KeyListener gets key events
         setVisible(true);
     }
 
     private void finalizeSeed() {
         if (seedBuilder.length() > 0) {
             Long seed = Long.parseLong(seedBuilder.toString());
+            System.out.println("Finalizing seed: " + seed); // Debug print
+
             startNewGameWithSeed(seed);
             enteringSeed = false;
             menuPanel.remove(promptLabel);
@@ -81,13 +110,19 @@ public class GameMenu extends JFrame {
 
     private void startNewGameWithSeed(Long seed) {
         JOptionPane.showMessageDialog(null, "Start new game with seed: " + seed);
-        World world = new World(seed);
-        TERenderer teRenderer = new TERenderer();
+        world = new World(seed);
+        if (world == null) {
+            System.out.println("World initialization failed"); // Debug print
+        } else {
+            System.out.println("World initialized successfully"); // Debug print
+        }
+        teRenderer = new TERenderer();
         int width = world.getMap().length;
         int height = world.getMap()[0].length;
         teRenderer.initialize(width, height);
 
         teRenderer.renderFrame(world.getMap());
+
     }
 
 

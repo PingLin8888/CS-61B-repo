@@ -15,6 +15,9 @@ public class World {
     final private static TETile FLOOR = Tileset.FLOOR;
     final private static TETile WALL = Tileset.WALL;
     final private static long SEEDDefault = 87654L;
+    final private static TETile AVATAR = Tileset.AVATAR;
+
+    private int avatarX, avatarY;
 
     private long seed;
     private Random random;
@@ -39,6 +42,47 @@ public class World {
         usedSpaces = new HashSet<>();
         map = new TETile[WIDTH][HEIGHT];
         initializeWorld();
+        placeAvatar();
+    }
+
+    private void placeAvatar() {
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                if (map[i][j] == FLOOR) {
+                    avatarX = i;
+                    avatarY = j;
+                    map[i][j] = AVATAR;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void moveAvatar(char direction) {
+        System.out.println("moving avatar in world");
+        int newX = avatarX;
+        int newY = avatarY;
+        switch (Character.toLowerCase(direction)) {
+            case 'w' -> {
+                newY += 1;
+            }
+            case 'a' -> {
+                newX -= 1;
+            }
+            case 's' -> {
+                newY -= 1;
+            }
+            case 'd' -> {
+                newX += 1;
+            }
+        }
+        if (newX >= 0 && newX <= WIDTH && newY >= 0 && newY <= HEIGHT && map[newX][newY] == FLOOR) {
+            map[avatarX][avatarY] = FLOOR;
+            avatarX = newX;
+            avatarY = newY;
+            map[avatarX][avatarY] = AVATAR;
+        }
+
     }
 
     private void initializeWorld() {
@@ -290,5 +334,8 @@ public class World {
 
     public TETile[][] getMap() {
         return map;
+    }
+
+    public void saveGame() {
     }
 }
