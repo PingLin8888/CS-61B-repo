@@ -11,10 +11,9 @@ import java.awt.event.KeyListener;
 /**
  * Created by gpt
  */
-public class GameMenu{
+public class GameMenu {
     private static World world;
     private static TERenderer ter;
-
     private static StringBuilder seedBuilder = new StringBuilder();
     private static boolean enteringSeed = false;
     private static boolean gameStarted = false;
@@ -24,6 +23,7 @@ public class GameMenu{
     public static void main(String[] args) {
         StdDraw.setCanvasSize(800, 600);
         ter = new TERenderer();
+
 
         while (true) {
             if (redraw) {
@@ -60,13 +60,7 @@ public class GameMenu{
         if (StdDraw.hasNextKeyTyped()) {
             char key = StdDraw.nextKeyTyped();
             redraw = true; // Set redraw flag to true for any key press
-            if (enteringSeed) {
-                if (Character.isDigit(key)) {
-                    seedBuilder.append(key);
-                } else if (key == 's' || key == 'S') {
-                    finalizeSeed();
-                }
-            } else {
+            if (!enteringSeed && !gameStarted) {
                 switch (key) {
                     case 'N':
                     case 'n':
@@ -82,12 +76,15 @@ public class GameMenu{
                         System.exit(0);
                         break;
                 }
-            }
-        } else if (gameStarted) {
-            if (StdDraw.hasNextKeyTyped()) {
-                char moveKey = StdDraw.nextKeyTyped();
-                handleMovement(moveKey);
-                redraw = true; // Set redraw flag to true if there's movement
+            } else if (enteringSeed) {
+                if (Character.isDigit(key)) {
+                    seedBuilder.append(key);
+                } else if (key == 's' || key == 'S') {
+                    finalizeSeed();
+                }
+            } else {
+                handleMovement(key);
+                redraw = true;
             }
         }
     }
