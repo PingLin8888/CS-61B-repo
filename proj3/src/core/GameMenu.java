@@ -2,6 +2,7 @@ package core;
 
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
+import tileengine.TETile;
 import utils.FileUtils;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class GameMenu {
                     drawSeedEntry();
                 } else {
                     ter.renderFrame(world.getMap());
+                    drawHUD();
                 }
                 StdDraw.show();
                 redraw = false;
@@ -138,11 +140,9 @@ public class GameMenu {
             FileUtils.writeFile(fileName, contents);
 
             // Print the path where the file is saved
-            System.out.println("Game saved to: " + new File(fileName).getAbsolutePath());
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-
     }
 
     public static void loadGame() {
@@ -158,11 +158,24 @@ public class GameMenu {
             drawWorld();
             gameStarted = true;
             // Print the path where the file is read from
-            System.out.println("Game loaded from: " + new File(fileName).getAbsolutePath());
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+    }
 
+    private static void drawHUD() {
+        String description;
+        int mouseX = (int) Math.floor(StdDraw.mouseX());
+        int mouseY = (int) Math.floor(StdDraw.mouseY());
+
+        if (mouseX >= 0 && mouseX < world.getMap().length && mouseY >= 0 && mouseY < world.getMap()[0].length) {
+            TETile tile = world.getMap()[mouseX][mouseY];
+            description = tile.description();
+        } else {
+            description = "out side of map";
+        }
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.textLeft(0.01, 0.99, description);
     }
 }
 
