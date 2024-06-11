@@ -2,6 +2,8 @@ package saveload;
 
 import utils.FileUtils;
 
+import java.io.File;
+
 public class SaveLoad {
 
     public static void main(String[] args) {
@@ -29,5 +31,9 @@ public class SaveLoad {
         FileUtils.writeFile(fileName, newNum + "");
 
         // Make note of where the file is stored and check if the count has been incremented.
+        System.out.println("File is stored in : " + new File(fileName).getAbsolutePath());
+
+        System.out.println("content of the file is: " + FileUtils.readFile(fileName));
+
     }
 }

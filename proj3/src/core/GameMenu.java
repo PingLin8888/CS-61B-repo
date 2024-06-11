@@ -2,6 +2,9 @@ package core;
 
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
+import utils.FileUtils;
+
+import java.io.File;
 
 
 /**
@@ -81,7 +84,7 @@ public class GameMenu {
                     quitSignBuilder.setLength(0);
                     quitSignBuilder.append(key);
                 } else if (key == 'q' && quitSignBuilder.toString().equals(":")) {
-                    world.saveGame();
+                    saveGame();
                     System.exit(0);
                 }
                 handleMovement(key);
@@ -91,7 +94,7 @@ public class GameMenu {
     }
 
     private static void finalizeSeed() {
-        if (seedBuilder.length() > 0) {
+        if (!seedBuilder.isEmpty()) {
             long seed = Long.parseLong(seedBuilder.toString());
             world = new World(seed);
             int width = world.getMap().length;
@@ -109,16 +112,6 @@ public class GameMenu {
         }
     }
 
-    private static void loadGame() {
-        world = new World();
-        world.loadGame();
-        int width = world.getMap().length;
-        int height = world.getMap()[0].length;
-        ter.initialize(width, height);
-        gameStarted = true;
-        ter.renderFrame(world.getMap());
-        redraw = true; // Set redraw flag to true after loading game
-    }
 
     private static void handleMovement(char key) {
         switch (Character.toLowerCase(key)) {
@@ -129,6 +122,40 @@ public class GameMenu {
                 world.moveAvatar(key);
                 break;
         }
+    }
+
+    public static void saveGame() {
+        String fileName = "save-file.txt";
+        try {
+            // Serialize seed, avatarX, and avatarY directly
+            String contents = world.getSeed() + "\n" + world.getAvatarX() + "\n" + world.getAvatarY() + "\n";
+            // Write contents to file using FileUtils
+            FileUtils.writeFile(fileName, contents);
+
+            // Print the path where the file is saved
+            System.out.println("Game saved to: " + new File(fileName).getAbsolutePath());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void loadGame() {
+        String fileName = "save-file.txt";
+        try {
+            // Read contents from file using FileUtils
+            String contents = FileUtils.readFile(fileName);
+
+            // Parse seed, avatarX, and avatarY
+            String[] lines = contents.split("\n");
+            world = new World(Long.parseLong(lines[0]));
+            world.setAvatarToNewPosition(Integer.parseInt(lines[1]),Integer.parseInt(lines[2]));
+            // Print the path where the file is read from
+            System.out.println("Game loaded from: " + new File(fileName).getAbsolutePath());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

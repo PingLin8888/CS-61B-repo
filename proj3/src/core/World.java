@@ -62,26 +62,22 @@ public class World {
         int newX = avatarX;
         int newY = avatarY;
         switch (Character.toLowerCase(direction)) {
-            case 'w' -> {
-                newY += 1;
-            }
-            case 'a' -> {
-                newX -= 1;
-            }
-            case 's' -> {
-                newY -= 1;
-            }
-            case 'd' -> {
-                newX += 1;
-            }
+            case 'w' -> newY += 1;
+            case 'a' -> newX -= 1;
+            case 's' -> newY -= 1;
+            case 'd' -> newX += 1;
         }
         if (newX >= 0 && newX <= WIDTH && newY >= 0 && newY <= HEIGHT && map[newX][newY] == FLOOR) {
-            map[avatarX][avatarY] = FLOOR;
-            avatarX = newX;
-            avatarY = newY;
-            map[avatarX][avatarY] = AVATAR;
+            setAvatarToNewPosition(newX, newY);
         }
 
+    }
+
+    void setAvatarToNewPosition(int newX, int newY) {
+        map[avatarX][avatarY] = FLOOR;
+        avatarX = newX;
+        avatarY = newY;
+        map[avatarX][avatarY] = AVATAR;
     }
 
     private void initializeWorld() {
@@ -103,9 +99,9 @@ public class World {
         if (rooms.isEmpty()) {
             return;
         }
-        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingDouble(edge -> edge.getDistance()));
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingDouble(Edge::getDistance));
         Set<Room> inMST = new HashSet<>();
-        Room startRoom = rooms.get(0);
+        Room startRoom = rooms.getFirst();
         inMST.add(startRoom);
 
         for (Room room : rooms) {
@@ -116,6 +112,7 @@ public class World {
 
         while ((inMST.size() < rooms.size())) {
             Edge minEdge = pq.poll();
+            assert minEdge != null;
             if (inMST.contains(minEdge.getRoom1()) && inMST.contains(minEdge.getRoom2())) {
                 continue;
             }
@@ -189,7 +186,7 @@ public class World {
 
     //should check if place hallway is successful, if not. connect in another hallway.
     public void connectRooms(Room room1, Room room2) {
-        Hallway hallway = new Hallway();
+        Hallway hallway;
         if (room1.getPositionY() > room2.getPositionY()) {
             hallway = createHallway(room2, room1);
 
@@ -335,9 +332,18 @@ public class World {
         return map;
     }
 
-    public void saveGame() {
+    public int getAvatarX() {
+        return avatarX;
     }
 
-    public void loadGame() {
+
+    public int getAvatarY() {
+        return avatarY;
     }
+
+
+    public long getSeed() {
+        return seed;
+    }
+
 }
