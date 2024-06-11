@@ -95,21 +95,26 @@ public class GameMenu {
 
     private static void finalizeSeed() {
         if (!seedBuilder.isEmpty()) {
-            long seed = Long.parseLong(seedBuilder.toString());
-            world = new World(seed);
-            int width = world.getMap().length;
-            int height = world.getMap()[0].length;
-            ter.initialize(width, height);
-
             enteringSeed = false;
             gameStarted = true;
-            StdDraw.clear();
-            ter.renderFrame(world.getMap());
+            long seed = Long.parseLong(seedBuilder.toString());
+            world = new World(seed);
+            System.out.println("starting to draw world.");
+            drawWorld();
+
             redraw = true; // Set redraw flag to true after seed entry
         } else {
             StdDraw.text(0.5, 0.5, "Seed cannot be empty. Please enter a valid seed.");
             StdDraw.show();
         }
+    }
+
+    private static void drawWorld() {
+        StdDraw.clear();
+        int width = world.getMap().length;
+        int height = world.getMap()[0].length;
+        ter.initialize(width, height);
+        ter.renderFrame(world.getMap());
     }
 
 
@@ -149,7 +154,9 @@ public class GameMenu {
             // Parse seed, avatarX, and avatarY
             String[] lines = contents.split("\n");
             world = new World(Long.parseLong(lines[0]));
-            world.setAvatarToNewPosition(Integer.parseInt(lines[1]),Integer.parseInt(lines[2]));
+            world.setAvatarToNewPosition(Integer.parseInt(lines[1]), Integer.parseInt(lines[2]));
+            drawWorld();
+            gameStarted = true;
             // Print the path where the file is read from
             System.out.println("Game loaded from: " + new File(fileName).getAbsolutePath());
         } catch (RuntimeException e) {
