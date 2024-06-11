@@ -3,10 +3,6 @@ package core;
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * Created by gpt
@@ -15,12 +11,13 @@ public class GameMenu {
     private static World world;
     private static TERenderer ter;
     private static StringBuilder seedBuilder = new StringBuilder();
+    private static StringBuilder quitSignBuilder = new StringBuilder();
     private static boolean enteringSeed = false;
     private static boolean gameStarted = false;
     private static boolean redraw = true;
 
 
-    public static void main(String[] args) {
+    public void createGameMenu() {
         StdDraw.setCanvasSize(800, 600);
         ter = new TERenderer();
 
@@ -58,20 +55,17 @@ public class GameMenu {
 
     private static void handleInput() {
         if (StdDraw.hasNextKeyTyped()) {
-            char key = StdDraw.nextKeyTyped();
+            char key = Character.toLowerCase(StdDraw.nextKeyTyped());
             redraw = true; // Set redraw flag to true for any key press
             if (!enteringSeed && !gameStarted) {
                 switch (key) {
-                    case 'N':
                     case 'n':
                         enteringSeed = true;
                         seedBuilder.setLength(0);
                         break;
-                    case 'L':
                     case 'l':
                         loadGame();
                         break;
-                    case 'Q':
                     case 'q':
                         System.exit(0);
                         break;
@@ -79,10 +73,17 @@ public class GameMenu {
             } else if (enteringSeed) {
                 if (Character.isDigit(key)) {
                     seedBuilder.append(key);
-                } else if (key == 's' || key == 'S') {
+                } else if (key == 's') {
                     finalizeSeed();
                 }
             } else {
+                if (key == ':') {
+                    quitSignBuilder.setLength(0);
+                    quitSignBuilder.append(key);
+                } else if (key == 'q' && quitSignBuilder.toString().equals(":")) {
+                    world.saveGame();
+                    System.exit(0);
+                }
                 handleMovement(key);
                 redraw = true;
             }
@@ -126,15 +127,6 @@ public class GameMenu {
             case 's':
             case 'd':
                 world.moveAvatar(key);
-                break;
-            case ':':
-                if (StdDraw.hasNextKeyTyped()) {
-                    char nextKey = StdDraw.nextKeyTyped();
-                    if (nextKey == 'Q' || nextKey == 'q') {
-                        world.saveGame();
-                        System.exit(0);
-                    }
-                }
                 break;
         }
     }

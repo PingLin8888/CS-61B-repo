@@ -59,7 +59,6 @@ public class World {
     }
 
     public void moveAvatar(char direction) {
-        System.out.println("moving avatar in world");
         int newX = avatarX;
         int newY = avatarY;
         switch (Character.toLowerCase(direction)) {

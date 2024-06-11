@@ -11,7 +11,7 @@ public class Main {
 
         // build your own world!
         //main menu with options. navigate via keyboard
-
-
+        GameMenu gameMenu = new GameMenu();
+        gameMenu.createGameMenu();
     }
 }
