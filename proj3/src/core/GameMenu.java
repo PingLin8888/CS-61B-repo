@@ -19,6 +19,7 @@ public class GameMenu {
     private static boolean enteringSeed = false;
     private static boolean gameStarted = false;
     private static boolean redraw = true;
+    private String HUD;
 
 
     public void createGameMenu() {
@@ -27,21 +28,20 @@ public class GameMenu {
 
 
         while (true) {
-            if (redraw) {
-                StdDraw.clear(StdDraw.BLACK);
-                if (!enteringSeed && !gameStarted) {
-                    drawMenu();
-                } else if (enteringSeed) {
-                    drawSeedEntry();
-                } else {
-                    ter.renderFrame(world.getMap());
-                    drawHUD();
-                }
-                StdDraw.show();
-                redraw = false;
+            StdDraw.clear(StdDraw.BLACK);
+            if (!enteringSeed && !gameStarted) {
+                drawMenu();
+//                StdDraw.show();
+
+            } else if (enteringSeed) {
+                drawSeedEntry();
+//                StdDraw.show();
+            } else {
+//                ter.renderFrame(world.getMap());
+                drawHUD();
             }
             handleInput();
-            StdDraw.pause(20);
+            StdDraw.pause(100);
         }
     }
 
@@ -67,19 +67,24 @@ public class GameMenu {
                     case 'n':
                         enteringSeed = true;
                         seedBuilder.setLength(0);
+//                        StdDraw.show();
                         break;
                     case 'l':
                         loadGame();
+//                        StdDraw.show();
                         break;
                     case 'q':
                         System.exit(0);
+//                        StdDraw.show();
                         break;
                 }
             } else if (enteringSeed) {
                 if (Character.isDigit(key)) {
                     seedBuilder.append(key);
+//                    StdDraw.show();
                 } else if (key == 's') {
                     finalizeSeed();
+//                    StdDraw.show();
                 }
             } else {
                 if (key == ':') {
@@ -90,7 +95,7 @@ public class GameMenu {
                     System.exit(0);
                 }
                 handleMovement(key);
-                redraw = true;
+//                StdDraw.show();
             }
         }
     }
@@ -107,12 +112,12 @@ public class GameMenu {
             redraw = true; // Set redraw flag to true after seed entry
         } else {
             StdDraw.text(0.5, 0.5, "Seed cannot be empty. Please enter a valid seed.");
-            StdDraw.show();
+//            StdDraw.show();
         }
     }
 
     private static void drawWorld() {
-        StdDraw.clear();
+//        StdDraw.clear();
         int width = world.getMap().length;
         int height = world.getMap()[0].length;
         ter.initialize(width, height);
@@ -163,7 +168,7 @@ public class GameMenu {
         }
     }
 
-    private static void drawHUD() {
+    private void drawHUD() {
         String description;
         int mouseX = (int) Math.floor(StdDraw.mouseX());
         int mouseY = (int) Math.floor(StdDraw.mouseY());
@@ -174,8 +179,12 @@ public class GameMenu {
         } else {
             description = "out side of map";
         }
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.textLeft(0.01, 0.99, description);
+        if (!description.equals(HUD)) {
+            StdDraw.setPenColor(StdDraw.WHITE);
+            StdDraw.textLeft(0.01, 0.99, description);
+//            StdDraw.show();
+        }
+
     }
 }
 
