@@ -5,11 +5,9 @@ import tileengine.TERenderer;
 import tileengine.TETile;
 import utils.FileUtils;
 
-import java.io.File;
-
 
 /**
- * Created by gpt
+ * Inspired by GPT.
  */
 public class GameMenu {
     private static World world;
@@ -19,31 +17,66 @@ public class GameMenu {
     private static boolean enteringSeed = false;
     private static boolean gameStarted = false;
     private static boolean redraw = true;
-    private String HUD;
+    private double prevMouseX = 0;
+    private double prevMouseY = 0;
 
 
     public void createGameMenu() {
         StdDraw.setCanvasSize(800, 600);
         ter = new TERenderer();
-
-
         while (true) {
-            StdDraw.clear(StdDraw.BLACK);
-            if (!enteringSeed && !gameStarted) {
-                drawMenu();
-//                StdDraw.show();
-
-            } else if (enteringSeed) {
-                drawSeedEntry();
-//                StdDraw.show();
-            } else {
-//                ter.renderFrame(world.getMap());
-                drawHUD();
+            if (redraw) {
+                StdDraw.clear(StdDraw.BLACK);
+                if (!enteringSeed && !gameStarted) {
+                    drawMenu();
+                } else if (enteringSeed) {
+                    drawSeedEntry();
+                } else {
+                    ter.renderFrame(world.getMap());
+                    updateHUD();
+                }
+                StdDraw.show();
+                redraw = false;
             }
             handleInput();
-            StdDraw.pause(100);
+            detectMouseMove();
+            StdDraw.pause(20);
         }
     }
+
+    private void detectMouseMove() {
+        double currentMouseX = StdDraw.mouseX();
+        double currentMouseY = StdDraw.mouseY();
+
+        if (hasMouseMoved(currentMouseX, currentMouseY)) {
+
+            // Update previous mouse position
+            prevMouseX = currentMouseX;
+            prevMouseY = currentMouseY;
+            redraw = true;
+        }
+    }
+
+    private boolean hasMouseMoved(double currentMouseX, double currentMouseY) {
+        return currentMouseX != prevMouseX || currentMouseY != prevMouseY;
+    }
+
+    private void updateHUD() {
+        // Example HUD update method
+        String description;
+        int mouseX = (int) Math.floor(prevMouseX);
+        int mouseY = (int) Math.floor(prevMouseY);
+
+        if (mouseX >= 0 && mouseX < world.getMap().length && mouseY >= 0 && mouseY < world.getMap()[0].length) {
+            TETile tile = world.getMap()[mouseX][mouseY];
+            description = tile.description();
+        } else {
+            description = "out side of map";
+        }
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.textLeft(0.01, 0.99, description);
+    }
+
 
     private static void drawMenu() {
         StdDraw.setPenColor(StdDraw.WHITE);
@@ -168,24 +201,6 @@ public class GameMenu {
         }
     }
 
-    private void drawHUD() {
-        String description;
-        int mouseX = (int) Math.floor(StdDraw.mouseX());
-        int mouseY = (int) Math.floor(StdDraw.mouseY());
-
-        if (mouseX >= 0 && mouseX < world.getMap().length && mouseY >= 0 && mouseY < world.getMap()[0].length) {
-            TETile tile = world.getMap()[mouseX][mouseY];
-            description = tile.description();
-        } else {
-            description = "out side of map";
-        }
-        if (!description.equals(HUD)) {
-            StdDraw.setPenColor(StdDraw.WHITE);
-            StdDraw.textLeft(0.01, 0.99, description);
-//            StdDraw.show();
-        }
-
-    }
 }
 
 
