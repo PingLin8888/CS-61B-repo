@@ -100,24 +100,19 @@ public class GameMenu {
                     case 'n':
                         enteringSeed = true;
                         seedBuilder.setLength(0);
-//                        StdDraw.show();
                         break;
                     case 'l':
                         loadGame();
-//                        StdDraw.show();
                         break;
                     case 'q':
                         System.exit(0);
-//                        StdDraw.show();
                         break;
                 }
             } else if (enteringSeed) {
                 if (Character.isDigit(key)) {
                     seedBuilder.append(key);
-//                    StdDraw.show();
                 } else if (key == 's') {
                     finalizeSeed();
-//                    StdDraw.show();
                 }
             } else {
                 if (key == ':') {
@@ -128,7 +123,6 @@ public class GameMenu {
                     System.exit(0);
                 }
                 handleMovement(key);
-//                StdDraw.show();
             }
         }
     }
@@ -145,7 +139,6 @@ public class GameMenu {
             redraw = true; // Set redraw flag to true after seed entry
         } else {
             StdDraw.text(0.5, 0.5, "Seed cannot be empty. Please enter a valid seed.");
-//            StdDraw.show();
         }
     }
 

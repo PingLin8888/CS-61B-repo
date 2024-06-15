@@ -5,6 +5,7 @@ import tileengine.Tileset;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class World {
 
@@ -145,6 +146,72 @@ public class World {
                 placeRoom(newRoom);
             }
         }
+    }
+
+    private ArrayList<Point> findPath(Point start, Point goal) {
+        Map<Point, Double> gScore = new HashMap<>();
+        PriorityQueue<Point> openSet = new PriorityQueue<>(Comparator.comparingDouble(p -> gScore.getOrDefault(p, Double.POSITIVE_INFINITY)));
+        Set<Point> closedSet = new HashSet<>();
+        Map<Point, Point> comeFrom = new HashMap<>();
+        openSet.add(start);
+        gScore.put(start, 0.0);
+
+        while (!openSet.isEmpty()) {
+            Point current = openSet.poll();
+            if (current.equals(goal)) {
+                return constructPath(comeFrom, current);
+            }
+
+            closedSet.add(current);
+
+            for (Point neighbour : getNeighbour(current)) {
+                if (closedSet.contains(neighbour)) {
+                    continue;
+                }
+
+                double tentativeGScore = gScore.get(current) + 1;
+
+                if (!openSet.contains(neighbour)) {
+                    openSet.add(neighbour);
+                } else if (tentativeGScore >= gScore.get(neighbour)) {
+                    continue;
+                }
+
+                gScore.put(neighbour, tentativeGScore);
+                comeFrom.put(neighbour, current);
+            }
+        }
+        return null;
+    }
+
+    private List<Point> getNeighbour(Point current) {
+        List<Point> neighbour = new ArrayList<>();
+        int x = current.x;
+        int y = current.y;
+        if (x > 0) {
+            neighbour.add(new Point(x - 1, y));
+        }
+        if (x < WIDTH - 1) {
+            neighbour.add(new Point(x + 1, y));
+        }
+        if (y > 0) {
+            neighbour.add(new Point(x, y - 1));
+        }
+        if (y < HEIGHT - 1) {
+            neighbour.add(new Point(x, y + 1));
+        }
+        return neighbour;
+    }
+
+    private ArrayList<Point> constructPath(Map<Point, Point> comeFrom, Point current) {
+        ArrayList<Point> path = new ArrayList<>();
+        path.add(current);
+        while (comeFrom.containsKey(current)) {
+            current = comeFrom.get(current);
+            path.add(current);
+        }
+        Collections.reverse(path);
+        return path;
     }
 
     private void markUsed(Iterable<Point> points) {
