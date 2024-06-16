@@ -21,6 +21,8 @@ public class GameMenu {
     private static boolean redraw = true;
     private double prevMouseX = 0;
     private double prevMouseY = 0;
+    private long lastChaserMoveTime = 0; // Variable to track the last time the chaser moved
+    private static final long CHASER_MOVE_INTERVAL = 500; // Interval in milliseconds between chaser movements
 
 
     public void createGameMenu() {
@@ -48,8 +50,12 @@ public class GameMenu {
             StdDraw.pause(20);
 
             if (gameStarted) {
-                world.moveChaser();
-                redraw = true;
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastChaserMoveTime >= CHASER_MOVE_INTERVAL) {
+                    world.moveChaser();
+                    lastChaserMoveTime = currentTime; // Update the last move time
+                    redraw = true;
+                }
             }
         }
     }

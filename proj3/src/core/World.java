@@ -18,7 +18,7 @@ public class World {
     final private static TETile WALL = Tileset.WALL;
     final private static long SEEDDefault = 87654L;
     final private static TETile AVATAR = Tileset.AVATAR;
-    final private static TETile CHASER = Tileset.MOUNTAIN;
+    final private static TETile CHASER = Tileset.FLOWER;
 
     private int avatarX, avatarY;
     private int chaseX, chaseY;
