@@ -1,5 +1,6 @@
 package core;
 
+import org.checkerframework.checker.units.qual.A;
 import tileengine.TETile;
 import tileengine.Tileset;
 
@@ -77,7 +78,7 @@ public class World {
         }
     }
 
-    public void moveChaser(){
+    public void moveChaser() {
         pathToAvatar = findPath(new Point(chaseX, chaseY), new Point(avatarX, avatarY));
         if (pathToAvatar != null && !pathToAvatar.isEmpty()) {
             Point next = pathToAvatar.get(0);
@@ -226,16 +227,16 @@ public class World {
         List<Point> neighbour = new ArrayList<>();
         int x = current.x;
         int y = current.y;
-        if (x > 0) {
+        if (x > 0 && (map[x - 1][y] == FLOOR || map[x - 1][y] == AVATAR)) {
             neighbour.add(new Point(x - 1, y));
         }
-        if (x < WIDTH - 1) {
+        if (x < WIDTH - 1 && (map[x + 1][y] == FLOOR || map[x + 1][y] == AVATAR)) {
             neighbour.add(new Point(x + 1, y));
         }
-        if (y > 0) {
+        if (y > 0 && (map[x][y - 1] == FLOOR||map[x][y - 1] == AVATAR)) {
             neighbour.add(new Point(x, y - 1));
         }
-        if (y < HEIGHT - 1) {
+        if (y < HEIGHT - 1 && (map[x][y + 1] == FLOOR || map[x][y + 1] == AVATAR)) {
             neighbour.add(new Point(x, y + 1));
         }
         return neighbour;
@@ -248,6 +249,8 @@ public class World {
             current = comeFrom.get(current);
             path.add(current);
         }
+        path.removeLast();
+        path.removeFirst();
         Collections.reverse(path);
         return path;
     }

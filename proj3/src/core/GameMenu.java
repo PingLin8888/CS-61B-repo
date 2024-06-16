@@ -139,6 +139,9 @@ public class GameMenu {
                     saveGame();
                     System.exit(0);
                 }
+                if (key == 'p') {
+                    world.togglePathDisplay();
+                }
                 handleMovement(key);
             }
         }
