@@ -5,6 +5,8 @@ import tileengine.TERenderer;
 import tileengine.TETile;
 import utils.FileUtils;
 
+import java.awt.*;
+
 
 /**
  * Inspired by GPT.
@@ -34,6 +36,9 @@ public class GameMenu {
                 } else {
                     ter.renderFrame(world.getMap());
                     updateHUD();
+                    if (world.isShowPath() && world.getPathToAvatar() != null) {
+                        drawPath();
+                    }
                 }
                 StdDraw.show();
                 redraw = false;
@@ -41,6 +46,18 @@ public class GameMenu {
             handleInput();
             detectMouseMove();
             StdDraw.pause(20);
+
+            if (gameStarted) {
+                world.moveChaser();
+                redraw = true;
+            }
+        }
+    }
+
+    private void drawPath() {
+        StdDraw.setPenColor(StdDraw.GREEN);
+        for (Point p : world.getPathToAvatar()) {
+            StdDraw.filledSquare(p.x + 0.5, p.y + 0.5, 0.5);
         }
     }
 

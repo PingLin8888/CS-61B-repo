@@ -17,8 +17,12 @@ public class World {
     final private static TETile WALL = Tileset.WALL;
     final private static long SEEDDefault = 87654L;
     final private static TETile AVATAR = Tileset.AVATAR;
+    final private static TETile CHASER = Tileset.MOUNTAIN;
 
     private int avatarX, avatarY;
+    private int chaseX, chaseY;
+    private boolean isShowPath;
+    private List<Point> pathToAvatar;
 
     private long seed;
     private Random random;
@@ -44,6 +48,7 @@ public class World {
         map = new TETile[WIDTH][HEIGHT];
         initializeWorld();
         placeAvatar();
+        placeChaser();
     }
 
     private void placeAvatar() {
@@ -58,6 +63,39 @@ public class World {
             }
         }
     }
+
+    private void placeChaser() {
+        for (int i = WIDTH - 1; i >= 0; i--) {
+            for (int j = HEIGHT - 1; j >= 0; j--) {
+                if (map[i][j] == FLOOR) {
+                    chaseX = i;
+                    chaseY = j;
+                    map[i][j] = CHASER;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void moveChaser(){
+        pathToAvatar = findPath(new Point(chaseX, chaseY), new Point(avatarX, avatarY));
+        if (pathToAvatar != null && !pathToAvatar.isEmpty()) {
+            Point next = pathToAvatar.get(0);
+            setChaserToNewPosition(next.x, next.y);
+        }
+    }
+
+    private void setChaserToNewPosition(int x, int y) {
+        map[chaseX][chaseY] = FLOOR;
+        chaseX = x;
+        chaseY = y;
+        map[chaseX][chaseY] = CHASER;
+    }
+
+    public void togglePathDisplay() {
+        isShowPath = !isShowPath;
+    }
+
 
     public void moveAvatar(char direction) {
         int newX = avatarX;
@@ -413,4 +451,11 @@ public class World {
         return seed;
     }
 
+    public boolean isShowPath() {
+        return isShowPath;
+    }
+
+    public List<Point> getPathToAvatar() {
+        return pathToAvatar;
+    }
 }
