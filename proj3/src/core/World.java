@@ -1,6 +1,5 @@
 package core;
 
-import org.checkerframework.checker.units.qual.A;
 import tileengine.TETile;
 import tileengine.Tileset;
 
@@ -86,7 +85,7 @@ public class World {
         }
     }
 
-    private void setChaserToNewPosition(int x, int y) {
+    public void setChaserToNewPosition(int x, int y) {
         map[chaseX][chaseY] = FLOOR;
         chaseX = x;
         chaseY = y;
@@ -174,7 +173,7 @@ public class World {
         //room should be within the boundaries of the world grid.
         while (rooms.size() < roomNums) {
             int width = random.nextInt(10) + 5;
-            int height = random.nextInt(5) + 3;
+            int height = random.nextInt(7) + 4;
             int x = random.nextInt(WIDTH - width - 2) + 1;
             int y = random.nextInt(HEIGHT - height - 2) + 1;
             Room newRoom = new Room(width, height, x, y);
@@ -460,5 +459,13 @@ public class World {
 
     public List<Point> getPathToAvatar() {
         return pathToAvatar;
+    }
+
+    public int getChaseX() {
+        return chaseX;
+    }
+
+    public int getChaseY() {
+        return chaseY;
     }
 }

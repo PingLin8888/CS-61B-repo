@@ -61,7 +61,7 @@ public class GameMenu {
     }
 
     private void drawPath() {
-        StdDraw.setPenColor(StdDraw.GREEN);
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
         for (Point p : world.getPathToAvatar()) {
             StdDraw.filledSquare(p.x + 0.5, p.y + 0.5, 0.5);
         }
@@ -192,7 +192,7 @@ public class GameMenu {
         String fileName = "save-file.txt";
         try {
             // Serialize seed, avatarX, and avatarY directly
-            String contents = world.getSeed() + "\n" + world.getAvatarX() + "\n" + world.getAvatarY() + "\n";
+            String contents = world.getSeed() + "\n" + world.getAvatarX() + "\n" + world.getAvatarY() + "\n"+ world.getChaseX() + "\n" + world.getChaseY() + "\n";
             // Write contents to file using FileUtils
             FileUtils.writeFile(fileName, contents);
 
@@ -212,6 +212,7 @@ public class GameMenu {
             String[] lines = contents.split("\n");
             world = new World(Long.parseLong(lines[0]));
             world.setAvatarToNewPosition(Integer.parseInt(lines[1]), Integer.parseInt(lines[2]));
+            world.setChaserToNewPosition(Integer.parseInt(lines[3]), Integer.parseInt(lines[4]));
             drawWorld();
             gameStarted = true;
             // Print the path where the file is read from
